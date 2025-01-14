@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">yad2cellular</string>
     <string name="create_account_link">
+    Create account
+    </string>
+    <string name="already_have_an_account_link">
     Already have an account? <font color="#0000FF">Login</font>
     </string>
     <string name="nexttrade">NextTrade</string>
