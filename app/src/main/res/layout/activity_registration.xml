@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="25dp"
         android:backgroundTint="#0000FF"
-        android:text="Create Account"
+        android:text="@string/create_account_link"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/already_have_an_account_text_view_registration_activity"
         app:layout_constraintEnd_toEndOf="parent"
