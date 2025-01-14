@@ -4,5 +4,7 @@
     Already have an account? <font color="#0000FF">Login</font>
     </string>
     <string name="nexttrade">NextTrade</string>
+    <string name="profile_image">Profile Image</string>
+
 
 </resources>
