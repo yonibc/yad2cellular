@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Yad2cellular" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Primary branding colors -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/teal_200</item>
 
-    <style name="Theme.Yad2cellular" parent="android:Theme.Material.Light.NoActionBar" />
+        <!-- Status bar and navigation bar customization -->
+        <item name="android:statusBarColor">@color/purple_700</item>
+        <item name="android:navigationBarColor">@color/black</item>
+    </style>
 </resources>

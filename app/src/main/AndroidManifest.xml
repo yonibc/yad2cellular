@@ -12,23 +12,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Yad2cellular"
         tools:targetApi="31">
+
+        <!-- RegistrationActivity -->
         <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
+
+        <!-- LoginActivity - Set as Launcher -->
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Yad2cellular">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- MainActivity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Yad2cellular" />
     </application>
 
 </manifest>

@@ -33,30 +33,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/app_name_text_view_registration_activity" />
 
-    <Button
-        android:id="@+id/upload_button_registration_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="#0000FF"
-        android:text="Upload Profile Image"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image_view_registration_activity" />
-
     <EditText
         android:id="@+id/first_name_edit_text_registration_activity"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="40dp"
         android:hint="First name"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/upload_button_registration_activity" />
+        tools:layout_editor_absoluteY="271dp" />
 
     <EditText
         android:id="@+id/last_name_edit_text_registration_activity"
@@ -121,5 +108,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/add_image_image_button_registration_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_image_view_registration_activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/add_photo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
