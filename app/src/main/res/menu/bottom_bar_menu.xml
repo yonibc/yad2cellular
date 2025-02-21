@@ -13,7 +13,7 @@
         android:title="Create" />
 
     <item
-        android:id="@+id/nav_account"
+        android:id="@+id/myProfileFragment"
         android:icon="@drawable/person_24dp_5f6368_fill0_wght400_grad0_opsz24"
         android:title="Account" />
 
