@@ -12,12 +12,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class UpdateDetailsFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var database: DatabaseReference
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,7 +25,7 @@ class UpdateDetailsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_update_details, container, false)
 
         auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance().reference
+        firestore = FirebaseFirestore.getInstance()
 
         val profileImageView: ImageView = view.findViewById(R.id.profile_image_view_update_details)
         val firstNameEditText: EditText = view.findViewById(R.id.first_name_edit_text_update_details)
@@ -37,12 +36,21 @@ class UpdateDetailsFragment : Fragment() {
         val user: FirebaseUser? = auth.currentUser
         user?.let {
             val userId = it.uid
-            val userRef = database.child("users").child(userId)
+            val userRef = firestore.collection("users").document(userId)
 
-            userRef.get().addOnSuccessListener { snapshot ->
-                firstNameEditText.setText(snapshot.child("firstName").value.toString())
-                lastNameEditText.setText(snapshot.child("lastName").value.toString())
-            }
+            // Fetch user data from Firestore
+            userRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        firstNameEditText.setText(document.getString("firstName"))
+                        lastNameEditText.setText(document.getString("lastName"))
+                    } else {
+                        Toast.makeText(requireContext(), "User data not found!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Failed to load data", Toast.LENGTH_SHORT).show()
+                }
         }
 
         updateButton.setOnClickListener {
@@ -52,9 +60,20 @@ class UpdateDetailsFragment : Fragment() {
             if (firstName.isNotEmpty() && lastName.isNotEmpty()) {
                 val userId = user?.uid
                 if (userId != null) {
-                    database.child("users").child(userId).child("firstName").setValue(firstName)
-                    database.child("users").child(userId).child("lastName").setValue(lastName)
-                    Toast.makeText(requireContext(), "Details updated successfully", Toast.LENGTH_SHORT).show()
+                    val userData = hashMapOf(
+                        "firstName" to firstName,
+                        "lastName" to lastName
+                    )
+
+                    // Update Firestore
+                    firestore.collection("users").document(userId)
+                        .set(userData)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Details updated successfully", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Failed to update details", Toast.LENGTH_SHORT).show()
+                        }
                 }
             } else {
                 Toast.makeText(requireContext(), "Please enter all fields", Toast.LENGTH_SHORT).show()
