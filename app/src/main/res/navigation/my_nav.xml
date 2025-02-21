@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/createPostFragment">
+
+    <fragment
+        android:id="@+id/createPostFragment"
+        android:name="com.example.yad2cellular.CreatePostFragment"
+        android:label="fragment_create_post"
+        tools:layout="@layout/fragment_create_post" >
+        <action
+            android:id="@+id/action_createPostFragment_to_updatePostFragment"
+            app:destination="@id/updatePostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updatePostFragment"
+        android:name="com.example.yad2cellular.UpdatePostFragment"
+        android:label="fragment_update_post"
+        tools:layout="@layout/fragment_update_post" >
+        <action
+            android:id="@+id/action_updatePostFragment_to_createPostFragment"
+            app:destination="@id/createPostFragment" />
+    </fragment>
+</navigation>
