@@ -26,19 +26,18 @@ class MainActivity : AppCompatActivity() {
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNavigationView.setupWithNavController(navController)
 
-            // Fix: Ensure clicking "Account" always navigates to MyProfileFragment
             bottomNavigationView.setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.myProfileFragment -> {
-                        navController.navigate(R.id.myProfileFragment) // Always go to MyProfileFragment
+                        navController.navigate(R.id.myProfileFragment)
                         true
                     }
                     R.id.postsFragment -> {
-                        navController.navigate(R.id.postsFragment) // Always go to PostsFragment
+                        navController.navigate(R.id.postsFragment)
                         true
                     }
                     else -> {
-                        navController.navigate(item.itemId) // Normal behavior
+                        navController.navigate(item.itemId)
                         true
                     }
                 }

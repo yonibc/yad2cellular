@@ -49,7 +49,6 @@ class CreatePostFragment : Fragment() {
         addImageButton = view.findViewById(R.id.add_image_image_button_create_post_activity)
         createPostButton = view.findViewById(R.id.create_post_button_create_post_activity)
 
-        // Setup Spinners
         val categories = arrayOf("Cars", "Electronics", "Houses")
         val locations = arrayOf("Tel Aviv", "Jerusalem")
         categorySpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
@@ -137,7 +136,6 @@ class CreatePostFragment : Fragment() {
                 progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Post Created!", Toast.LENGTH_SHORT).show()
 
-                // **Clear all fields after successful submission**
                 clearFields()
             }
             .addOnFailureListener {

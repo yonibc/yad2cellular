@@ -44,7 +44,6 @@ class PostDetailsFragment : Fragment() {
                 postImageView.setImageResource(R.drawable.placeholder_image)
             }
 
-            // Fetch seller email from Firestore using userId
             val firestore = FirebaseFirestore.getInstance()
             firestore.collection("users").document(it.userId)
                 .get()
