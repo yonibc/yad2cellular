@@ -8,12 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2cellular.model.Post
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MyPostsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var postAdapter: PostAdapter
+    private lateinit var myPostAdapter: MyPostsAdapter
     private val postList = mutableListOf<Post>()
+    private val firestore = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,38 +27,33 @@ class MyPostsFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewMyPosts)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        myPostAdapter = MyPostsAdapter(postList)
+        recyclerView.adapter = myPostAdapter
 
-        // Mock posts
-        postList.addAll(
-            listOf(
-                Post(
-                    postId = "1",
-                    userId = "user123",
-                    name = "Samsung Galaxy S21",
-                    price = "2,000",
-                    description = "Great condition, barely used.",
-                    category = "Smartphones",
-                    location = "Tel Aviv",
-                    imageUrl = "https://example.com/s21.jpg",
-                    timestamp = System.currentTimeMillis()
-                ),
-                Post(
-                    postId = "2",
-                    userId = "user123",
-                    name = "iPhone 13 Pro",
-                    price = "3,500",
-                    description = "Brand new in box.",
-                    category = "Smartphones",
-                    location = "Jerusalem",
-                    imageUrl = "https://example.com/iphone13pro.jpg",
-                    timestamp = System.currentTimeMillis()
-                )
-            )
-        )
-
-        postAdapter = PostAdapter(postList)
-        recyclerView.adapter = postAdapter
+        fetchUserPosts()
 
         return view
+    }
+
+    private fun fetchUserPosts() {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            return // User not logged in
+        }
+
+        firestore.collection("posts")
+            .whereEqualTo("userId", currentUser.uid)
+            .get()
+            .addOnSuccessListener { documents ->
+                postList.clear()
+                for (document in documents) {
+                    val post = document.toObject(Post::class.java)
+                    postList.add(post)
+                }
+                myPostAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener {
+                // Handle the error (e.g., show a message to the user)
+            }
     }
 }
