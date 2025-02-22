@@ -55,7 +55,7 @@ class UpdateDetailsFragment : Fragment() {
                     firstNameEditText.setText(document.getString("firstName"))
                     lastNameEditText.setText(document.getString("lastName"))
                     currentImageUrl = document.getString("profileImageUrl")
-                    currentEmail = document.getString("email")  // Preserve email
+                    currentEmail = document.getString("email")
 
                     if (!currentImageUrl.isNullOrEmpty()) {
                         Picasso.get()
