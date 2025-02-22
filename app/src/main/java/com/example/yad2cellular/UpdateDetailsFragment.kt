@@ -128,7 +128,7 @@ class UpdateDetailsFragment : Fragment() {
             "firstName" to firstName,
             "lastName" to lastName,
             "profileImageUrl" to (imageUrl ?: currentImageUrl ?: ""),
-            "email" to (currentEmail ?: "") // Preserve email
+            "email" to (currentEmail ?: "")
         )
 
         firestore.collection("users").document(userId)
