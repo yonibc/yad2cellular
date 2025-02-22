@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_nav"
-    app:startDestination="@id/postsFragment">
+    app:startDestination="@id/myPostsFragment">
 
     <fragment
         android:id="@+id/createPostFragment"
@@ -32,4 +32,9 @@
             android:id="@+id/action_postsFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/myPostsFragment"
+        android:name="com.example.yad2cellular.MyPostsFragment"
+        android:label="fragment_my_posts"
+        tools:layout="@layout/fragment_my_posts" />
 </navigation>
