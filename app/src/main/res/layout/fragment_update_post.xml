@@ -107,4 +107,14 @@
         app:layout_constraintTop_toBottomOf="@+id/item_description_edit_text_create_post_activity"
         app:srcCompat="@drawable/add_photo" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar_update_post"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
