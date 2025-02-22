@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_home"
+        android:id="@+id/postsFragment"
         android:icon="@drawable/home_24dp_5f6368_fill0_wght400_grad0_opsz24"
         android:title="Home" />
 
     <item
-        android:id="@+id/nav_plus"
+        android:id="@+id/createPostFragment"
         android:icon="@drawable/add_24dp_5f6368_fill0_wght400_grad0_opsz24"
         android:title="Create" />
 
