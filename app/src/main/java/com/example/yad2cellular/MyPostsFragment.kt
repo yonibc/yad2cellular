@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2cellular.model.Post
@@ -27,7 +28,16 @@ class MyPostsFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewMyPosts)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        myPostAdapter = MyPostsAdapter(postList)
+
+        myPostAdapter = MyPostsAdapter(postList,
+            onEditClickListener = { post ->
+                // Handle edit action here
+                findNavController().navigate(R.id.action_myPostsFragment_to_updatePostFragment)
+            },
+            onDeleteClickListener = { post ->
+                // Handle delete action here
+            }
+        )
         recyclerView.adapter = myPostAdapter
 
         fetchUserPosts()

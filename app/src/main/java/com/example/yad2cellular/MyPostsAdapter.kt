@@ -4,18 +4,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2cellular.model.Post
 
-class MyPostsAdapter(private val posts: List<Post>) : RecyclerView.Adapter<MyPostsAdapter.MyPostViewHolder>() {
+class MyPostsAdapter(
+    private val posts: List<Post>,
+    private val onEditClickListener: (Post) -> Unit, // Edit button listener
+    private val onDeleteClickListener: (Post) -> Unit // Delete button listener
+) : RecyclerView.Adapter<MyPostsAdapter.MyPostViewHolder>() {
 
     class MyPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemName: TextView = itemView.findViewById(R.id.itemName)
         val price: TextView = itemView.findViewById(R.id.price)
         val category: TextView = itemView.findViewById(R.id.category)
-//        val postImage: ImageView = itemView.findViewById(R.id.postImage)
         val editButton: ImageButton = itemView.findViewById(R.id.imageButton)
         val deleteButton: ImageButton = itemView.findViewById(R.id.imageButton2)
     }
@@ -31,13 +33,13 @@ class MyPostsAdapter(private val posts: List<Post>) : RecyclerView.Adapter<MyPos
         holder.price.text = "$${post.price}"
         holder.category.text = post.category
 
-        // Click listeners for edit and delete buttons
+        // Set listeners for buttons
         holder.editButton.setOnClickListener {
-            // Handle edit action
+            onEditClickListener(post)
         }
 
         holder.deleteButton.setOnClickListener {
-            // Handle delete action
+            onDeleteClickListener(post)
         }
     }
 

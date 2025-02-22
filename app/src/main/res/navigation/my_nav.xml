@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_myPostsFragment_to_myProfileFragment"
             app:destination="@id/myProfileFragment" />
+        <action
+            android:id="@+id/action_myPostsFragment_to_updatePostFragment"
+            app:destination="@id/updatePostFragment" />
     </fragment>
 
     <fragment
