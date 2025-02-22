@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +18,7 @@ class MyPostsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var myPostAdapter: MyPostsAdapter
+    private lateinit var progressBar: ProgressBar
     private val postList = mutableListOf<Post>()
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -27,15 +30,15 @@ class MyPostsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_my_posts, container, false)
 
         recyclerView = view.findViewById(R.id.recyclerViewMyPosts)
+        progressBar = view.findViewById(R.id.progress_bar_my_posts)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         myPostAdapter = MyPostsAdapter(postList,
             onEditClickListener = { post ->
-                // Handle edit action here
                 findNavController().navigate(R.id.action_myPostsFragment_to_updatePostFragment)
             },
             onDeleteClickListener = { post ->
-                // Handle delete action here
+                Toast.makeText(requireContext(), "Delete post", Toast.LENGTH_SHORT).show()
             }
         )
         recyclerView.adapter = myPostAdapter
@@ -51,10 +54,13 @@ class MyPostsFragment : Fragment() {
             return // User not logged in
         }
 
+        progressBar.visibility = View.VISIBLE
+
         firestore.collection("posts")
             .whereEqualTo("userId", currentUser.uid)
             .get()
             .addOnSuccessListener { documents ->
+                progressBar.visibility = View.GONE
                 postList.clear()
                 for (document in documents) {
                     val post = document.toObject(Post::class.java)
@@ -63,7 +69,9 @@ class MyPostsFragment : Fragment() {
                 myPostAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener {
-                // Handle the error (e.g., show a message to the user)
+                progressBar.visibility = View.GONE
+                Toast.makeText(requireContext(), "Failed to load my posts", Toast.LENGTH_SHORT).show()
             }
     }
 }
+
