@@ -3,21 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_nav"
-    app:startDestination="@id/createPostFragment">
+    app:startDestination="@id/postsFragment">
+
+    <fragment
+        android:id="@+id/postsFragment"
+        android:name="com.example.yad2cellular.PostsFragment"
+        android:label="Posts"
+        tools:layout="@layout/fragment_posts" />
 
     <fragment
         android:id="@+id/createPostFragment"
         android:name="com.example.yad2cellular.CreatePostFragment"
-        android:label="fragment_create_post"
+        android:label="Create Post"
         tools:layout="@layout/fragment_create_post" >
         <action
             android:id="@+id/action_createPostFragment_to_updatePostFragment"
             app:destination="@id/updatePostFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/updatePostFragment"
         android:name="com.example.yad2cellular.UpdatePostFragment"
-        android:label="fragment_update_post"
+        android:label="Update Post"
         tools:layout="@layout/fragment_update_post" >
         <action
             android:id="@+id/action_updatePostFragment_to_createPostFragment"
@@ -28,11 +35,9 @@
         android:id="@+id/myProfileFragment"
         android:name="com.example.yad2cellular.MyProfileFragment"
         tools:layout="@layout/fragment_my_profile">
-
         <action
             android:id="@+id/action_myProfileFragment_to_updateDetailsFragment"
             app:destination="@id/updateDetailsFragment" />
-
     </fragment>
     <fragment
         android:id="@+id/myPostsFragment"
@@ -40,10 +45,13 @@
         android:label="fragment_my_posts"
         tools:layout="@layout/fragment_my_posts" />
 
-
     <fragment
         android:id="@+id/updateDetailsFragment"
         android:name="com.example.yad2cellular.UpdateDetailsFragment"
-        android:label="Update Details" />
+        android:label="Update Details" >
+        <action
+            android:id="@+id/action_updateDetailsFragment_to_myProfileFragment"
+            app:destination="@id/myProfileFragment" />
+    </fragment>
 
 </navigation>
