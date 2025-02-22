@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37524887629",
+    "project_id": "yad2cellular",
+    "storage_bucket": "yad2cellular.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37524887629:android:a3cff5a972289b732ae404",
+        "android_client_info": {
+          "package_name": "com.example.yad2cellular"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZdywNnp7KgPXMOtTGJmn46wFuUMKU2Ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

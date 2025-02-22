@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_nav"
-    app:startDestination="@id/myPostsFragment">
+    app:startDestination="@id/createPostFragment">
 
     <fragment
         android:id="@+id/createPostFragment"
@@ -23,18 +23,27 @@
             android:id="@+id/action_updatePostFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/postsFragment"
-        android:name="com.example.yad2cellular.PostsFragment"
-        android:label="fragment_posts"
-        tools:layout="@layout/fragment_posts" >
+        android:id="@+id/myProfileFragment"
+        android:name="com.example.yad2cellular.MyProfileFragment"
+        tools:layout="@layout/fragment_my_profile">
+
         <action
-            android:id="@+id/action_postsFragment_to_createPostFragment"
-            app:destination="@id/createPostFragment" />
+            android:id="@+id/action_myProfileFragment_to_updateDetailsFragment"
+            app:destination="@id/updateDetailsFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/myPostsFragment"
         android:name="com.example.yad2cellular.MyPostsFragment"
         android:label="fragment_my_posts"
         tools:layout="@layout/fragment_my_posts" />
+
+
+    <fragment
+        android:id="@+id/updateDetailsFragment"
+        android:name="com.example.yad2cellular.UpdateDetailsFragment"
+        android:label="Update Details" />
+
 </navigation>

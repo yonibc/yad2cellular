@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,32 +9,26 @@
     android:background="#FFFFFF"
     tools:context=".MainActivity">
 
-    <!-- Fragment Container (Takes up all available space above bottom bar) -->
+    <!-- Fragment Container (takes up available space above bottom bar) -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingBottom="56dp"
         app:defaultNavHost="true"
         app:navGraph="@navigation/my_nav"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav" />
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation" />
 
+    <!-- Bottom Navigation Bar (ensuring it's visible) -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
         app:menu="@menu/bottom_bar_menu"
-        app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
+        app:itemIconTint="@android:color/black"
+        app:itemTextColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
