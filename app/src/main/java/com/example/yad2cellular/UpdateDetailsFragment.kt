@@ -22,6 +22,7 @@ class UpdateDetailsFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private var selectedImageUri: Uri? = null
     private var currentImageUrl: String? = null
+    private var currentEmail: String? = null  // Store email to prevent deletion
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +55,7 @@ class UpdateDetailsFragment : Fragment() {
                     firstNameEditText.setText(document.getString("firstName"))
                     lastNameEditText.setText(document.getString("lastName"))
                     currentImageUrl = document.getString("profileImageUrl")
+                    currentEmail = document.getString("email")
 
                     if (!currentImageUrl.isNullOrEmpty()) {
                         Picasso.get()
@@ -125,7 +127,8 @@ class UpdateDetailsFragment : Fragment() {
         val userData = hashMapOf(
             "firstName" to firstName,
             "lastName" to lastName,
-            "profileImageUrl" to (imageUrl ?: currentImageUrl ?: "")
+            "profileImageUrl" to (imageUrl ?: currentImageUrl ?: ""),
+            "email" to (currentEmail ?: "")
         )
 
         firestore.collection("users").document(userId)

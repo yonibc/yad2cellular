@@ -1,10 +1,12 @@
 package com.example.yad2cellular
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.example.yad2cellular.model.Post
@@ -30,9 +32,16 @@ class PostAdapter(private val postList: List<Post>) : RecyclerView.Adapter<PostA
         holder.category.text = post.category
 
         if (post.imageUrl.isNotEmpty()) {
-            Picasso.get().load(post.imageUrl).into(holder.postImage)
+            Picasso.get().load(post.imageUrl).placeholder(R.drawable.placeholder_image).into(holder.postImage)
         } else {
             holder.postImage.setImageResource(R.drawable.placeholder_image)
+        }
+
+        holder.itemView.setOnClickListener { view ->
+            val bundle = Bundle().apply {
+                putParcelable("post", post)
+            }
+            view.findNavController().navigate(R.id.action_postsFragment_to_postDetailsFragment, bundle)
         }
     }
 

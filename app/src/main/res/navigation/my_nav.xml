@@ -8,8 +8,16 @@
     <fragment
         android:id="@+id/postsFragment"
         android:name="com.example.yad2cellular.PostsFragment"
-        android:label="Posts"
-        tools:layout="@layout/fragment_posts" />
+        tools:layout="@layout/fragment_posts">
+        <action
+            android:id="@+id/action_postsFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.example.yad2cellular.PostDetailsFragment"
+        tools:layout="@layout/fragment_post_details" />
 
     <fragment
         android:id="@+id/createPostFragment"
