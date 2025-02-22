@@ -1,5 +1,9 @@
 package com.example.yad2cellular.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Post(
     val postId: String = "",
     val userId: String = "",
@@ -9,6 +13,5 @@ data class Post(
     val category: String = "",
     val location: String = "",
     val imageUrl: String = "",
-    val timestamp: Long = 0
-)
-
+    val email: String = ""
+) : Parcelable
