@@ -38,19 +38,16 @@ class MyPostsFragment : Fragment() {
                 findNavController().navigate(R.id.action_myPostsFragment_to_updatePostFragment)
             },
             onDeleteClickListener = { post ->
-                // Show confirmation dialog
                 val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
                 dialogBuilder.setMessage("Are you sure you want to delete this post?")
                     .setCancelable(false)
                     .setPositiveButton("Yes") { dialog, id ->
-                        // If user confirms, delete the post from Firestore
                         val currentUser = auth.currentUser
                         if (currentUser != null && post.userId == currentUser.uid) {
                             firestore.collection("posts")
-                                .document(post.postId) // Use the post's ID to locate it in Firestore
+                                .document(post.postId)
                                 .delete()
                                 .addOnSuccessListener {
-                                    // Remove from local list and notify adapter
                                     postList.remove(post)
                                     myPostAdapter.notifyDataSetChanged()
                                     Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
@@ -61,11 +58,9 @@ class MyPostsFragment : Fragment() {
                         }
                     }
                     .setNegativeButton("No") { dialog, id ->
-                        // Dismiss dialog if user cancels
                         dialog.dismiss()
                     }
 
-                // Create and show the alert dialog
                 val alert = dialogBuilder.create()
                 alert.show()
             }

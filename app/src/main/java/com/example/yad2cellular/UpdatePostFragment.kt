@@ -57,14 +57,12 @@ class UpdatePostFragment : Fragment() {
         postImageButton = view.findViewById(R.id.add_image_image_button_create_post_activity)
         updateButton = view.findViewById(R.id.create_post_button_create_post_activity)
 
-        // Setup Spinners BEFORE loading data
         val categories = arrayOf("Cars", "Electronics", "Houses")
         val locations = arrayOf("Tel Aviv", "Jerusalem")
 
         categorySpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
         locationSpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, locations)
 
-        // Load post data from Firestore
         loadPostData()
 
         val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -103,7 +101,6 @@ class UpdatePostFragment : Fragment() {
                     priceEditText.setText(price)
                     descriptionEditText.setText(description)
 
-                    // Set spinner selections AFTER setting up adapters
                     setSpinnerSelection(categorySpinner, category)
                     setSpinnerSelection(locationSpinner, location)
 

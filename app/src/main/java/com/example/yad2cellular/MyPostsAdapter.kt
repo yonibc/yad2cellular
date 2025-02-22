@@ -10,8 +10,8 @@ import com.example.yad2cellular.model.Post
 
 class MyPostsAdapter(
     private val posts: List<Post>,
-    private val onEditClickListener: (Post) -> Unit, // Edit button listener
-    private val onDeleteClickListener: (Post) -> Unit // Delete button listener
+    private val onEditClickListener: (Post) -> Unit,
+    private val onDeleteClickListener: (Post) -> Unit
 ) : RecyclerView.Adapter<MyPostsAdapter.MyPostViewHolder>() {
 
     class MyPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,7 +33,6 @@ class MyPostsAdapter(
         holder.price.text = "$${post.price}"
         holder.category.text = post.category
 
-        // Set listeners for buttons
         holder.editButton.setOnClickListener {
             onEditClickListener(post)
         }
