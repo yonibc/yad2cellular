@@ -29,9 +29,9 @@ class MyProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_myProfileFragment_to_updateDetailsFragment)
         }
 
-//        binding.myPostsButton.setOnClickListener {
-//            findNavController().navigate(R.id.action_myProfileFragment_to_myPostsFragment)
-//        }
+        binding.myPostsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_myProfileFragment_to_myPostsFragment)
+        }
 
         binding.logoutButton.setOnClickListener {
             auth.signOut()

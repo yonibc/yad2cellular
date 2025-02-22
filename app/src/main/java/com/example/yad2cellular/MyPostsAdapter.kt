@@ -27,7 +27,7 @@ class MyPostsAdapter(private val posts: List<Post>) : RecyclerView.Adapter<MyPos
 
     override fun onBindViewHolder(holder: MyPostViewHolder, position: Int) {
         val post = posts[position]
-        holder.itemName.text = post.itemName
+        holder.itemName.text = post.name
         holder.price.text = "$${post.price}"
         holder.category.text = post.category
 
