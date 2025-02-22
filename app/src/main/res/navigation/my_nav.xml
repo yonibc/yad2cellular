@@ -3,16 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_nav"
-    app:startDestination="@id/postsFragment"> <!-- Set PostsFragment as the default screen -->
+    app:startDestination="@id/postsFragment">
 
-    <!-- Posts Fragment (Home) -->
     <fragment
         android:id="@+id/postsFragment"
         android:name="com.example.yad2cellular.PostsFragment"
         android:label="Posts"
         tools:layout="@layout/fragment_posts" />
 
-    <!-- Create Post Fragment -->
     <fragment
         android:id="@+id/createPostFragment"
         android:name="com.example.yad2cellular.CreatePostFragment"
@@ -23,7 +21,6 @@
             app:destination="@id/updatePostFragment" />
     </fragment>
 
-    <!-- Update Post Fragment -->
     <fragment
         android:id="@+id/updatePostFragment"
         android:name="com.example.yad2cellular.UpdatePostFragment"
@@ -34,7 +31,6 @@
             app:destination="@id/createPostFragment" />
     </fragment>
 
-    <!-- My Profile Fragment -->
     <fragment
         android:id="@+id/myProfileFragment"
         android:name="com.example.yad2cellular.MyProfileFragment"
@@ -44,7 +40,6 @@
             app:destination="@id/updateDetailsFragment" />
     </fragment>
 
-    <!-- Update Details Fragment -->
     <fragment
         android:id="@+id/updateDetailsFragment"
         android:name="com.example.yad2cellular.UpdateDetailsFragment"
