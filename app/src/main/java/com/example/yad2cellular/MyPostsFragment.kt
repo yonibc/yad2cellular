@@ -1,59 +1,60 @@
 package com.example.yad2cellular
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.yad2cellular.model.Post
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MyPostsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MyPostsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var postAdapter: PostAdapter
+    private val postList = mutableListOf<Post>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_posts, container, false)
-    }
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_my_posts, container, false)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MyPostsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MyPostsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        recyclerView = view.findViewById(R.id.recyclerViewMyPosts)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // Mock posts
+        postList.addAll(
+            listOf(
+                Post(
+                    postId = "1",
+                    userId = "user123",
+                    name = "Samsung Galaxy S21",
+                    price = "2,000",
+                    description = "Great condition, barely used.",
+                    category = "Smartphones",
+                    location = "Tel Aviv",
+                    imageUrl = "https://example.com/s21.jpg",
+                    timestamp = System.currentTimeMillis()
+                ),
+                Post(
+                    postId = "2",
+                    userId = "user123",
+                    name = "iPhone 13 Pro",
+                    price = "3,500",
+                    description = "Brand new in box.",
+                    category = "Smartphones",
+                    location = "Jerusalem",
+                    imageUrl = "https://example.com/iphone13pro.jpg",
+                    timestamp = System.currentTimeMillis()
+                )
+            )
+        )
+
+        postAdapter = PostAdapter(postList)
+        recyclerView.adapter = postAdapter
+
+        return view
     }
 }

@@ -32,7 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:visibility="visible"
-            app:srcCompat="@drawable/edit_24dp_5f6368_fill0_wght400_grad0_opsz24" />
+            app:srcCompat="@drawable/edit_24dp_5f6368_fill0_wght400_grad0_opsz24"
+            android:background="@android:color/holo_red_light"
+            />
 
         <ImageButton
             android:id="@+id/imageButton2"
@@ -40,7 +42,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:visibility="visible"
-            app:srcCompat="@drawable/delete_24dp_5f6368_fill0_wght400_grad0_opsz24" />
+            app:srcCompat="@drawable/delete_24dp_5f6368_fill0_wght400_grad0_opsz24"
+            android:background="@android:color/holo_red_light"
+            />
     </LinearLayout>
 
     <TextView
