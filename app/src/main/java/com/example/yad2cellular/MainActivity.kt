@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +25,24 @@ class MainActivity : AppCompatActivity() {
 
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNavigationView.setupWithNavController(navController)
+
+            // Fix: Ensure clicking "Account" always navigates to MyProfileFragment
+            bottomNavigationView.setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.myProfileFragment -> {
+                        navController.navigate(R.id.myProfileFragment) // Always go to MyProfileFragment
+                        true
+                    }
+                    R.id.postsFragment -> {
+                        navController.navigate(R.id.postsFragment) // Always go to PostsFragment
+                        true
+                    }
+                    else -> {
+                        navController.navigate(item.itemId) // Normal behavior
+                        true
+                    }
+                }
+            }
         }
     }
 }
