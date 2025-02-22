@@ -37,6 +37,10 @@
         <action
             android:id="@+id/action_updatePostFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
+
+        <argument
+            android:name="postId"
+            app:argType="string" />
     </fragment>
 
     <fragment

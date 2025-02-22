@@ -35,8 +35,9 @@ class MyPostsFragment : Fragment() {
 
         myPostAdapter = MyPostsAdapter(postList,
             onEditClickListener = { post ->
-                findNavController().navigate(R.id.action_myPostsFragment_to_updatePostFragment)
-            },
+                val action = MyPostsFragmentDirections
+                    .actionMyPostsFragmentToUpdatePostFragment(post.postId)
+                findNavController().navigate(action) },
             onDeleteClickListener = { post ->
                 Toast.makeText(requireContext(), "Delete post", Toast.LENGTH_SHORT).show()
             }

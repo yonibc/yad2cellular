@@ -22,7 +22,7 @@ class UpdateDetailsFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private var selectedImageUri: Uri? = null
     private var currentImageUrl: String? = null
-    private var currentEmail: String? = null  // Store email to prevent deletion
+    private var currentEmail: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
