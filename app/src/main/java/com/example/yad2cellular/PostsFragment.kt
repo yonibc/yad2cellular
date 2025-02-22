@@ -40,13 +40,13 @@ class PostsFragment : Fragment() {
     }
 
     private fun loadPostsFromFirestore() {
-        progressBar.visibility = View.VISIBLE // Show progress bar before loading
+        progressBar.visibility = View.VISIBLE
 
         firestore.collection("posts")
             .orderBy("timestamp")
             .get()
             .addOnSuccessListener { documents ->
-                progressBar.visibility = View.GONE // Hide progress bar once data is loaded
+                progressBar.visibility = View.GONE
                 postList.clear()
 
                 for (document in documents) {
@@ -57,7 +57,7 @@ class PostsFragment : Fragment() {
                 postAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener {
-                progressBar.visibility = View.GONE // Hide progress bar if an error occurs
+                progressBar.visibility = View.GONE
                 Toast.makeText(requireContext(), "Failed to load posts", Toast.LENGTH_SHORT).show()
             }
     }
