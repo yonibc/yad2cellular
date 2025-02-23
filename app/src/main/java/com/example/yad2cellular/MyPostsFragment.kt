@@ -35,7 +35,8 @@ class MyPostsFragment : Fragment() {
 
         myPostAdapter = MyPostsAdapter(postList,
             onEditClickListener = { post ->
-                findNavController().navigate(R.id.action_myPostsFragment_to_updatePostFragment)
+                val action = MyPostsFragmentDirections.actionMyPostsFragmentToUpdatePostFragment(post.postId)
+                findNavController().navigate(action)
             },
             onDeleteClickListener = { post ->
                 val dialogBuilder = android.app.AlertDialog.Builder(requireContext())

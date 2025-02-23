@@ -8,7 +8,7 @@
     tools:context=".UpdatePostFragment">
 
     <TextView
-        android:id="@+id/create_post_text_view_create_post_activity"
+        android:id="@+id/update_post_text_view_update_post_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -30,7 +30,7 @@
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/create_post_text_view_create_post_activity" />
+        app:layout_constraintTop_toBottomOf="@id/update_post_text_view_update_post_fragment" />
 
     <Spinner
         android:id="@+id/item_category_spinner_create_post_activity"

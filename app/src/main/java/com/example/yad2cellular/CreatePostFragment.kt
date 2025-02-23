@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -48,7 +49,6 @@ class CreatePostFragment : Fragment() {
         addImageButton = view.findViewById(R.id.add_image_image_button_create_post_activity)
         createPostButton = view.findViewById(R.id.create_post_button_create_post_activity)
 
-        // Setup Spinners
         val categories = arrayOf("Cars", "Electronics", "Houses")
         val locations = arrayOf("Tel Aviv", "Jerusalem")
         categorySpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
@@ -79,6 +79,7 @@ class CreatePostFragment : Fragment() {
                 } else {
                     savePostWithoutImage(itemName, itemPrice, itemDescription, category, location)
                 }
+                findNavController().navigate(R.id.action_createPostFragment_to_postsFragment)
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields!", Toast.LENGTH_SHORT).show()
             }
@@ -135,7 +136,6 @@ class CreatePostFragment : Fragment() {
                 progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Post Created!", Toast.LENGTH_SHORT).show()
 
-                // **Clear all fields after successful submission**
                 clearFields()
             }
             .addOnFailureListener {
