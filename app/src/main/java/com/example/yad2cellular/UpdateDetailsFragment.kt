@@ -37,6 +37,7 @@ class UpdateDetailsFragment : Fragment() {
         val profileImageView: ImageView = view.findViewById(R.id.profile_image_view_update_details)
         val firstNameEditText: EditText = view.findViewById(R.id.first_name_edit_text_update_details)
         val lastNameEditText: EditText = view.findViewById(R.id.last_name_edit_text_update_details)
+        val phoneEditText: EditText = view.findViewById(R.id.phone_edit_text_update_details)
         val updateButton: Button = view.findViewById(R.id.update_button_update_details)
         val addImageButton: ImageButton = view.findViewById(R.id.add_image_image_button_update_details)
         progressBar = view.findViewById(R.id.progress_bar_update_details)
@@ -54,6 +55,7 @@ class UpdateDetailsFragment : Fragment() {
                 if (document.exists()) {
                     firstNameEditText.setText(document.getString("firstName"))
                     lastNameEditText.setText(document.getString("lastName"))
+                    phoneEditText.setText(document.getString("phone"))
                     currentImageUrl = document.getString("profileImageUrl")
                     currentEmail = document.getString("email")
 
@@ -88,16 +90,17 @@ class UpdateDetailsFragment : Fragment() {
         updateButton.setOnClickListener {
             val firstName = firstNameEditText.text.toString().trim()
             val lastName = lastNameEditText.text.toString().trim()
+            val phone = phoneEditText.text.toString().trim()
 
-            if (firstName.isNotEmpty() && lastName.isNotEmpty()) {
+            if (firstName.isNotEmpty() && lastName.isNotEmpty() && phone.isNotEmpty()) {
                 val userId = user?.uid
                 if (userId != null) {
                     progressBar.visibility = View.VISIBLE
 
                     if (selectedImageUri != null) {
-                        uploadImageToStorage(userId, firstName, lastName)
+                        uploadImageToStorage(userId, firstName, lastName, phone)
                     } else {
-                        saveUserData(userId, firstName, lastName, currentImageUrl)
+                        saveUserData(userId, firstName, lastName, phone, currentImageUrl)
                     }
                 }
             } else {
@@ -108,13 +111,13 @@ class UpdateDetailsFragment : Fragment() {
         return view
     }
 
-    private fun uploadImageToStorage(userId: String, firstName: String, lastName: String) {
+    private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, phone: String) {
         val storageRef = storage.reference.child("profile_images/$userId.jpg")
 
         storageRef.putFile(selectedImageUri!!)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    saveUserData(userId, firstName, lastName, uri.toString())
+                    saveUserData(userId, firstName, lastName, phone, uri.toString())
                 }
             }
             .addOnFailureListener {
@@ -123,10 +126,11 @@ class UpdateDetailsFragment : Fragment() {
             }
     }
 
-    private fun saveUserData(userId: String, firstName: String, lastName: String, imageUrl: String?) {
+    private fun saveUserData(userId: String, firstName: String, lastName: String, phone: String, imageUrl: String?) {
         val userData = hashMapOf(
             "firstName" to firstName,
             "lastName" to lastName,
+            "phone" to phone,
             "profileImageUrl" to (imageUrl ?: currentImageUrl ?: ""),
             "email" to (currentEmail ?: "")
         )

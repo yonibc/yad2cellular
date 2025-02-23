@@ -51,12 +51,16 @@ class PostDetailsFragment : Fragment() {
                     if (document.exists()) {
                         val email = document.getString("email") ?: "Unknown Email"
                         sellerEmail.text = "Seller Email: $email"
+                        val phone = document.getString("phone") ?: "Unknown Phone"
+                        sellerPhone.text = "Seller Phone: $phone"
                     } else {
                         sellerEmail.text = "Seller Email: Not Found"
+                        sellerPhone.text = "Seller Phone: Not Found"
                     }
                 }
                 .addOnFailureListener {
                     sellerEmail.text = "Seller Email: Error Loading"
+                    sellerPhone.text = "Seller Phone: Error Loading"
                 }
         }
 
