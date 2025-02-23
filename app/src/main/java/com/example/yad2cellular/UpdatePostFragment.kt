@@ -150,18 +150,25 @@ class UpdatePostFragment : Fragment() {
         price: String,
         description: String
     ) {
-        val storageRef = storage.reference.child("post_images/$postId.jpg")
-        storageRef.putFile(selectedImageUri!!)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    savePostDataToFirestore(name, category, location, price, description, uri.toString())
+        selectedImageUri?.let { uri ->
+            val storageRef = storage.reference.child("post_images/$postId.jpg")
+
+            storageRef.putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        savePostDataToFirestore(name, category, location, price, description, downloadUri.toString())
+                    }
                 }
-            }
-            .addOnFailureListener {
-                progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Failed to upload image.", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Failed to upload image.", Toast.LENGTH_SHORT).show()
+                }
+        } ?: run {
+            progressBar.visibility = View.GONE
+            Toast.makeText(requireContext(), "No image selected!", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun savePostDataToFirestore(
         name: String,

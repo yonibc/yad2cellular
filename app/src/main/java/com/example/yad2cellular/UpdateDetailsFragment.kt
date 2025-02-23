@@ -109,19 +109,25 @@ class UpdateDetailsFragment : Fragment() {
     }
 
     private fun uploadImageToStorage(userId: String, firstName: String, lastName: String) {
-        val storageRef = storage.reference.child("profile_images/$userId.jpg")
+        selectedImageUri?.let { uri ->  
+            val storageRef = storage.reference.child("profile_images/$userId.jpg")
 
-        storageRef.putFile(selectedImageUri!!)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    saveUserData(userId, firstName, lastName, uri.toString())
+            storageRef.putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        saveUserData(userId, firstName, lastName, downloadUri.toString())
+                    }
                 }
-            }
-            .addOnFailureListener {
-                progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
+                }
+        } ?: run {
+            // If no new image is selected, update Firestore with existing image
+            saveUserData(userId, firstName, lastName, currentImageUrl)
+        }
     }
+
 
     private fun saveUserData(userId: String, firstName: String, lastName: String, imageUrl: String?) {
         val userData = hashMapOf(
