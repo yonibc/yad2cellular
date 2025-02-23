@@ -80,7 +80,7 @@ class RegistrationActivity : AppCompatActivity() {
                         if (selectedImageUri != null) {
                             uploadImageToStorage(userId, firstName, lastName, email, phone)
                         } else {
-                            saveUserToFirestore(userId, firstName, lastName, email, phone,null)
+                            saveUserToFirestore(userId, firstName, lastName, email, phone, null)
                         }
                     }
                 } else {
