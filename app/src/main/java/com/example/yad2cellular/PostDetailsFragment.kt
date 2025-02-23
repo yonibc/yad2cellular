@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.squareup.picasso.Picasso
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.yad2cellular.model.Post
@@ -29,6 +31,7 @@ class PostDetailsFragment : Fragment() {
         val sellerEmail: TextView = view.findViewById(R.id.sellerEmail)
         val sellerPhone: TextView = view.findViewById(R.id.sellerPhone)
         val progressBar: ProgressBar = view.findViewById(R.id.progress_bar_post_details)
+        val backArrow: ImageButton = view.findViewById(R.id.back_arrow)
 
         val post = arguments?.getParcelable<Post>("post")
 
@@ -69,6 +72,10 @@ class PostDetailsFragment : Fragment() {
                     sellerEmail.text = "Seller Email: Error Loading"
                     sellerPhone.text = "Seller Phone: Error Loading"
                 }
+        }
+
+        backArrow.setOnClickListener {
+            it.findNavController().navigate(R.id.action_postDetailsFragment_to_postsFragment)
         }
 
         return view
