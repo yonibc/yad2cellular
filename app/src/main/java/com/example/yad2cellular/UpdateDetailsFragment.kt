@@ -112,19 +112,24 @@ class UpdateDetailsFragment : Fragment() {
     }
 
     private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, phone: String) {
-        val storageRef = storage.reference.child("profile_images/$userId.jpg")
+        selectedImageUri?.let { uri ->
+            val storageRef = storage.reference.child("profile_images/$userId.jpg")
 
-        storageRef.putFile(selectedImageUri!!)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    saveUserData(userId, firstName, lastName, phone, uri.toString())
+            storageRef.putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        saveUserData(userId, firstName, lastName, phone, downloadUri.toString())
+                    }
                 }
-            }
-            .addOnFailureListener {
-                progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
+                }
+        } ?: run {
+            saveUserData(userId, firstName, lastName, phone, currentImageUrl)
+        }
     }
+
 
     private fun saveUserData(userId: String, firstName: String, lastName: String, phone: String, imageUrl: String?) {
         val userData = hashMapOf(

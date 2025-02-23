@@ -91,19 +91,24 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, email: String, phone: String) {
-        val storageRef = storage.reference.child("profile_images/$userId.jpg")
+        selectedImageUri?.let { uri ->
+            val storageRef = storage.reference.child("profile_images/$userId.jpg")
 
-        storageRef.putFile(selectedImageUri!!)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    saveUserToFirestore(userId, firstName, lastName, email, phone, uri.toString())
+            storageRef.putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        saveUserToFirestore(userId, firstName, lastName, email, phone, downloadUri.toString())
+                    }
                 }
-            }
-            .addOnFailureListener {
-                progressDialog.dismiss()
-                Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    progressDialog.dismiss()
+                    Toast.makeText(this@RegistrationActivity, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                }
+        } ?: run {
+            saveUserToFirestore(userId, firstName, lastName, email, phone, null)
+        }
     }
+
 
     private fun saveUserToFirestore(userId: String, firstName: String, lastName: String, email: String, phone: String, imageUrl: String?) {
         val user = hashMapOf(
