@@ -29,10 +29,12 @@ class PostsFragment : Fragment() {
     private val postList = mutableListOf<Post>()
     private var currentCategory: String? = null
 
+    private var shekelRate: Double = -1.0 // default value in case of error
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_posts, container, false)
 
         recyclerView = view.findViewById(R.id.recycler_view_posts)
@@ -41,7 +43,7 @@ class PostsFragment : Fragment() {
         exchangeRateText = view.findViewById(R.id.exchange_rate_text)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        postAdapter = PostAdapter(postList)
+        postAdapter = PostAdapter(postList, shekelRate)
         recyclerView.adapter = postAdapter
 
         filterButton.setOnClickListener { showPopupMenu(it) }
@@ -61,6 +63,8 @@ class PostsFragment : Fragment() {
             override fun onFailure(call: Call, ex: IOException) {
                 requireActivity().runOnUiThread {
                     exchangeRateText.text = "Failed to load rate"
+                    shekelRate = -1.0
+                    postAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -68,13 +72,17 @@ class PostsFragment : Fragment() {
                 response.body()?.string()?.let { responseBody ->
                     try {
                         val json = JSONObject(responseBody)
-                        val shekelRate = json.getJSONObject("rates").getDouble("ILS")
+                        shekelRate = json.getJSONObject("rates").getDouble("ILS")
                         requireActivity().runOnUiThread {
                             exchangeRateText.text = "1 USD = %.2f ILS".format(shekelRate)
+                            postAdapter.shekelRate = shekelRate
+                            postAdapter.notifyDataSetChanged()
                         }
                     } catch (ex: Exception) {
                         requireActivity().runOnUiThread {
                             exchangeRateText.text = "Error loading rate"
+                            shekelRate = -1.0
+                            postAdapter.notifyDataSetChanged()
                         }
                     }
                 }
