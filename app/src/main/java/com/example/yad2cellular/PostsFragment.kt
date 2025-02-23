@@ -40,7 +40,7 @@ class PostsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recycler_view_posts)
         progressBar = view.findViewById(R.id.progress_bar_posts)
         filterButton = view.findViewById(R.id.filter_button)
-        exchangeRateText = view.findViewById(R.id.exchange_rate_text)
+        exchangeRateText = view.findViewById(R.id.exchange_rate_text_posts_fragment)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         postAdapter = PostAdapter(postList, shekelRate)

@@ -29,8 +29,8 @@ class PostAdapter(private val postList: List<Post>, var shekelRate: Double) : Re
         val post = postList[position]
         holder.itemName.text = post.name
         val shekelPrice = String.format("%.2f", post.price.toDouble() * shekelRate)
-
         holder.price.text = "$${post.price} (₪${(shekelPrice)})"
+
         holder.category.text = post.category
 
         if (post.imageUrl.isNotEmpty()) {
