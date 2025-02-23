@@ -94,19 +94,24 @@ class CreatePostFragment : Fragment() {
         progressDialog.setMessage("Uploading post...")
         progressDialog.show()
 
-        val storageRef = storage.reference.child("post_images/$postId.jpg")
+        selectedImageUri?.let { uri ->
+            val storageRef = storage.reference.child("post_images/$postId.jpg")
 
-        storageRef.putFile(selectedImageUri!!)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { imageUrl ->
-                    savePostToFirestore(postId, userId, name, price, description, category, location, imageUrl.toString())
+            storageRef.putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { imageUrl ->
+                        savePostToFirestore(postId, userId, name, price, description, category, location, imageUrl.toString())
+                    }
                 }
-            }
-            .addOnFailureListener {
-                progressDialog.dismiss()
-                Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    progressDialog.dismiss()
+                    Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+                }
+        } ?: run {
+            savePostToFirestore(postId, userId, name, price, description, category, location, null)
+        }
     }
+
 
     private fun savePostWithoutImage(name: String, price: String, description: String, category: String, location: String) {
         val userId = auth.currentUser?.uid ?: return
