@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,6 +57,7 @@ class UpdatePostFragment : Fragment() {
         descriptionEditText = view.findViewById(R.id.item_description_edit_text_create_post_activity)
         postImageButton = view.findViewById(R.id.add_image_image_button_create_post_activity)
         updateButton = view.findViewById(R.id.create_post_button_create_post_activity)
+        val backArrow: ImageButton = view.findViewById(R.id.back_arrow_update_post)
 
         val categories = arrayOf("Cars", "Electronics", "Houses")
         val locations = arrayOf("Tel Aviv", "Jerusalem")
@@ -78,6 +80,10 @@ class UpdatePostFragment : Fragment() {
 
         updateButton.setOnClickListener {
             updatePostInFirestore()
+        }
+
+        backArrow.setOnClickListener {
+            it.findNavController().navigate(R.id.action_updatePostFragment_to_myPostsFragment)
         }
 
         return view

@@ -33,69 +33,89 @@
         android:id="@+id/postCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Category: Cars"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/postImage"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/postImage" />
 
     <TextView
         android:id="@+id/postLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Location: Jerusalem"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/postCategory"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/postCategory" />
 
     <TextView
         android:id="@+id/postPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Price: $30000"
-        android:textSize="16sp"
         android:textColor="@android:color/holo_green_dark"
-        app:layout_constraintTop_toBottomOf="@id/postLocation"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/postLocation" />
 
     <TextView
         android:id="@+id/postDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="Description: Mazda 3 for sale, well maintained, perfect for families."
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/postPrice"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/postPrice" />
 
     <TextView
         android:id="@+id/sellerEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
         android:text="Seller Email: johndoe@gmail.com"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/postDescription"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/postDescription" />
 
     <TextView
         android:id="@+id/sellerPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Phone: 058-1234567"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/sellerEmail"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/sellerEmail" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_post_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/postImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <ImageButton
+        android:id="@+id/back_arrow_post_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/arrow_back_24dp_5f6368_fill0_wght400_grad0_opsz24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

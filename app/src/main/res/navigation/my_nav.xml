@@ -17,7 +17,11 @@
     <fragment
         android:id="@+id/postDetailsFragment"
         android:name="com.example.yad2cellular.PostDetailsFragment"
-        tools:layout="@layout/fragment_post_details" />
+        tools:layout="@layout/fragment_post_details" >
+        <action
+            android:id="@+id/action_postDetailsFragment_to_postsFragment"
+            app:destination="@id/postsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/createPostFragment"
@@ -44,6 +48,9 @@
         <argument
             android:name="postId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_updatePostFragment_to_myPostsFragment"
+            app:destination="@id/myPostsFragment" />
     </fragment>
 
     <fragment

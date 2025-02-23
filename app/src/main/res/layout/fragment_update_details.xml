@@ -67,18 +67,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/first_name_edit_text_update_details"/>
 
+    <EditText
+        android:id="@+id/phone_edit_text_update_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/last_name_edit_text_update_details" />
+
     <Button
         android:id="@+id/update_button_update_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Update"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="#4CAF50"
+        android:text="Update"
         android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/last_name_edit_text_update_details"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="40dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phone_edit_text_update_details" />
 
     <ProgressBar
         android:id="@+id/progress_bar_update_details"
