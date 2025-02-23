@@ -31,6 +31,7 @@ class RegistrationActivity : AppCompatActivity() {
         val lastNameEditText: EditText = findViewById(R.id.last_name_edit_text_registration_activity)
         val emailEditText: EditText = findViewById(R.id.email_edit_text_registration_activity)
         val passwordEditText: EditText = findViewById(R.id.password_edit_text_registration_activity)
+        val phoneEditText: EditText = findViewById(R.id.phone_edit_text_registration_activity)
         val createAccountButton: Button = findViewById(R.id.create_account_button_registration_activity)
         val alreadyHaveAccountTextView: TextView = findViewById(R.id.already_have_an_account_text_view_registration_activity)
         val profileImageView: ImageView = findViewById(R.id.profile_image_view_registration_activity)
@@ -53,9 +54,10 @@ class RegistrationActivity : AppCompatActivity() {
             val lastName = lastNameEditText.text.toString().trim()
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
+            val phone = phoneEditText.text.toString().trim()
 
-            if (firstName.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-                registerUser(firstName, lastName, email, password)
+            if (firstName.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && phone.isNotEmpty()) {
+                registerUser(firstName, lastName, email, password, phone)
             } else {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             }
@@ -66,7 +68,7 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerUser(firstName: String, lastName: String, email: String, password: String) {
+    private fun registerUser(firstName: String, lastName: String, email: String, password: String, phone: String) {
         progressDialog.setMessage("Creating Account...")
         progressDialog.show()
 
@@ -76,9 +78,9 @@ class RegistrationActivity : AppCompatActivity() {
                     val userId = auth.currentUser?.uid
                     if (userId != null) {
                         if (selectedImageUri != null) {
-                            uploadImageToStorage(userId, firstName, lastName, email)
+                            uploadImageToStorage(userId, firstName, lastName, email, phone)
                         } else {
-                            saveUserToFirestore(userId, firstName, lastName, email, null)
+                            saveUserToFirestore(userId, firstName, lastName, email, phone,null)
                         }
                     }
                 } else {
@@ -88,13 +90,13 @@ class RegistrationActivity : AppCompatActivity() {
             }
     }
 
-    private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, email: String) {
+    private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, email: String, phone: String) {
         val storageRef = storage.reference.child("profile_images/$userId.jpg")
 
         storageRef.putFile(selectedImageUri!!)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    saveUserToFirestore(userId, firstName, lastName, email, uri.toString())
+                    saveUserToFirestore(userId, firstName, lastName, email, phone, uri.toString())
                 }
             }
             .addOnFailureListener {
@@ -103,11 +105,12 @@ class RegistrationActivity : AppCompatActivity() {
             }
     }
 
-    private fun saveUserToFirestore(userId: String, firstName: String, lastName: String, email: String, imageUrl: String?) {
+    private fun saveUserToFirestore(userId: String, firstName: String, lastName: String, email: String, phone: String, imageUrl: String?) {
         val user = hashMapOf(
             "firstName" to firstName,
             "lastName" to lastName,
             "email" to email,
+            "phone" to phone,
             "profileImageUrl" to (imageUrl ?: "")
         )
 

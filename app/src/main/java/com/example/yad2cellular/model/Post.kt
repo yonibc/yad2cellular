@@ -13,5 +13,6 @@ data class Post(
     val category: String = "",
     val location: String = "",
     val imageUrl: String = "",
-    val email: String = ""
+    val email: String = "",
+    val phone: String = ""
 ) : Parcelable
