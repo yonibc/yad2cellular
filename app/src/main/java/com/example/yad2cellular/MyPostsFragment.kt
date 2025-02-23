@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +34,7 @@ class MyPostsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewMyPosts)
         progressBar = view.findViewById(R.id.progress_bar_my_posts)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val backArrow: ImageButton = view.findViewById(R.id.back_arrow_my_posts)
 
         myPostAdapter = MyPostsAdapter(postList,
             onEditClickListener = { post ->
@@ -69,6 +72,10 @@ class MyPostsFragment : Fragment() {
         recyclerView.adapter = myPostAdapter
 
         fetchUserPosts()
+
+        backArrow.setOnClickListener {
+            it.findNavController().navigate(R.id.action_myPostsFragment_to_myProfileFragment)
+        }
 
         return view
     }

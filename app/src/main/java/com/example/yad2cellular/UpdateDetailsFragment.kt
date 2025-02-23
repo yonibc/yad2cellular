@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -41,6 +42,7 @@ class UpdateDetailsFragment : Fragment() {
         val updateButton: Button = view.findViewById(R.id.update_button_update_details)
         val addImageButton: ImageButton = view.findViewById(R.id.add_image_image_button_update_details)
         progressBar = view.findViewById(R.id.progress_bar_update_details)
+        val backArrow: ImageButton = view.findViewById(R.id.back_arrow_update_details)
 
         val user: FirebaseUser? = auth.currentUser
         user?.let {
@@ -106,6 +108,10 @@ class UpdateDetailsFragment : Fragment() {
             } else {
                 Toast.makeText(requireContext(), "Please enter all fields", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        backArrow.setOnClickListener {
+            it.findNavController().navigate(R.id.action_updateDetailsFragment_to_myProfileFragment)
         }
 
         return view

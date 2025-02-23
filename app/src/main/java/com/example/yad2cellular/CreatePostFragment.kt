@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
+import com.example.yad2cellular.utils.Constants
 
 class CreatePostFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
@@ -49,8 +50,8 @@ class CreatePostFragment : Fragment() {
         addImageButton = view.findViewById(R.id.add_image_image_button_create_post_activity)
         createPostButton = view.findViewById(R.id.create_post_button_create_post_activity)
 
-        val categories = arrayOf("Cars", "Electronics", "Houses")
-        val locations = arrayOf("Tel Aviv", "Jerusalem")
+        val categories = Constants.categories
+        val locations = Constants.locations
         categorySpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
         locationSpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, locations)
 
