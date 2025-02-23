@@ -31,7 +31,7 @@ class PostDetailsFragment : Fragment() {
         val sellerEmail: TextView = view.findViewById(R.id.sellerEmail)
         val sellerPhone: TextView = view.findViewById(R.id.sellerPhone)
         val progressBar: ProgressBar = view.findViewById(R.id.progress_bar_post_details)
-        val backArrow: ImageButton = view.findViewById(R.id.back_arrow)
+        val backArrow: ImageButton = view.findViewById(R.id.back_arrow_post_details)
 
         val post = arguments?.getParcelable<Post>("post")
 
