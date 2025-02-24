@@ -14,6 +14,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import com.example.yad2cellular.utils.Constants
 
 class UpdatePostFragment : Fragment() {
 
@@ -59,8 +60,8 @@ class UpdatePostFragment : Fragment() {
         updateButton = view.findViewById(R.id.create_post_button_create_post_activity)
         val backArrow: ImageButton = view.findViewById(R.id.back_arrow_update_post)
 
-        val categories = arrayOf("Cars", "Electronics", "Houses")
-        val locations = arrayOf("Tel Aviv", "Jerusalem")
+        val categories = Constants.categories
+        val locations = Constants.locations
 
         categorySpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
         locationSpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, locations)
