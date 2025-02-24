@@ -1,11 +1,14 @@
 package com.example.yad2cellular.model
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
+@Entity
 @Parcelize
 data class Post(
-    val postId: String = "",
+    @PrimaryKey val postId: String = "",
     val userId: String = "",
     val name: String = "",
     val price: String = "",
