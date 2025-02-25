@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2cellular.model.Post
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.yad2cellular.model.FirebaseModel
 
 class MyPostsFragment : Fragment() {
 
@@ -22,8 +22,9 @@ class MyPostsFragment : Fragment() {
     private lateinit var myPostAdapter: MyPostsAdapter
     private lateinit var progressBar: ProgressBar
     private val postList = mutableListOf<Post>()
-    private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+
+    private val firebase = FirebaseModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,17 +49,13 @@ class MyPostsFragment : Fragment() {
                     .setPositiveButton("Yes") { dialog, id ->
                         val currentUser = auth.currentUser
                         if (currentUser != null && post.userId == currentUser.uid) {
-                            firestore.collection("posts")
-                                .document(post.postId)
-                                .delete()
-                                .addOnSuccessListener {
-                                    postList.remove(post)
-                                    myPostAdapter.notifyDataSetChanged()
-                                    Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(requireContext(), "Failed to delete post", Toast.LENGTH_SHORT).show()
-                                }
+
+                            firebase.deletePost(post.postId) {
+                                postList.remove(post)
+                                myPostAdapter.notifyDataSetChanged()
+                                Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
+                            }
+
                         }
                     }
                     .setNegativeButton("No") { dialog, id ->
@@ -88,22 +85,14 @@ class MyPostsFragment : Fragment() {
 
         progressBar.visibility = View.VISIBLE
 
-        firestore.collection("posts")
-            .whereEqualTo("userId", currentUser.uid)
-            .get()
-            .addOnSuccessListener { documents ->
-                progressBar.visibility = View.GONE
-                postList.clear()
-                for (document in documents) {
-                    val post = document.toObject(Post::class.java)
-                    postList.add(post)
-                }
-                myPostAdapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener {
-                progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Failed to load my posts", Toast.LENGTH_SHORT).show()
-            }
+
+
+        firebase.getMyPosts(currentUser.uid) { posts ->
+            postList.clear()
+            postList.addAll(posts)
+            myPostAdapter.notifyDataSetChanged()
+            progressBar.visibility = View.GONE
+        }
+
     }
 }
-
