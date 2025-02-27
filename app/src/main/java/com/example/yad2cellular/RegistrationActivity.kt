@@ -7,14 +7,16 @@ import android.os.Bundle
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import com.example.yad2cellular.utils.CloudinaryManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var storage: FirebaseStorage
     private var selectedImageUri: Uri? = null
     private lateinit var progressDialog: ProgressDialog
 
@@ -24,8 +26,10 @@ class RegistrationActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-        storage = FirebaseStorage.getInstance()
         progressDialog = ProgressDialog(this)
+
+        // Initialize Cloudinary
+        CloudinaryManager.initialize(this)
 
         val firstNameEditText: EditText = findViewById(R.id.first_name_edit_text_registration_activity)
         val lastNameEditText: EditText = findViewById(R.id.last_name_edit_text_registration_activity)
@@ -78,7 +82,7 @@ class RegistrationActivity : AppCompatActivity() {
                     val userId = auth.currentUser?.uid
                     if (userId != null) {
                         if (selectedImageUri != null) {
-                            uploadImageToStorage(userId, firstName, lastName, email, phone)
+                            uploadImageToCloudinary(userId, firstName, lastName, email, phone)
                         } else {
                             saveUserToFirestore(userId, firstName, lastName, email, phone, null)
                         }
@@ -90,25 +94,40 @@ class RegistrationActivity : AppCompatActivity() {
             }
     }
 
-    private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, email: String, phone: String) {
+    private fun uploadImageToCloudinary(userId: String, firstName: String, lastName: String, email: String, phone: String) {
         selectedImageUri?.let { uri ->
-            val storageRef = storage.reference.child("profile_images/$userId.jpg")
+            progressDialog.setMessage("Uploading Image...")
+            progressDialog.show()
 
-            storageRef.putFile(uri)
-                .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        saveUserToFirestore(userId, firstName, lastName, email, phone, downloadUri.toString())
+            MediaManager.get().upload(uri)
+                .option("folder", "profile_images")
+                .callback(object : UploadCallback {
+                    override fun onStart(requestId: String?) {
+                        // Upload started
                     }
-                }
-                .addOnFailureListener {
-                    progressDialog.dismiss()
-                    Toast.makeText(this@RegistrationActivity, "Failed to upload image", Toast.LENGTH_SHORT).show()
-                }
+
+                    override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                        // Progress update
+                    }
+
+                    override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
+                        val imageUrl = resultData["secure_url"].toString()
+                        saveUserToFirestore(userId, firstName, lastName, email, phone, imageUrl)
+                    }
+
+                    override fun onError(requestId: String?, error: ErrorInfo?) {
+                        progressDialog.dismiss()
+                        Toast.makeText(this@RegistrationActivity, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                        // Upload rescheduled
+                    }
+                }).dispatch()
         } ?: run {
             saveUserToFirestore(userId, firstName, lastName, email, phone, null)
         }
     }
-
 
     private fun saveUserToFirestore(userId: String, firstName: String, lastName: String, email: String, phone: String, imageUrl: String?) {
         val user = hashMapOf(

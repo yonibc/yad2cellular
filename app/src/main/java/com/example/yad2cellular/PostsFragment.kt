@@ -69,7 +69,7 @@ class PostsFragment : Fragment() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                response.body()?.string()?.let { responseBody ->
+                response.body?.string()?.let { responseBody ->
                     try {
                         val json = JSONObject(responseBody)
                         shekelRate = json.getJSONObject("rates").getDouble("ILS")
@@ -89,6 +89,7 @@ class PostsFragment : Fragment() {
             }
         })
     }
+
 
     private fun showPopupMenu(view: View) {
         val popupMenu = PopupMenu(requireContext(), view)
