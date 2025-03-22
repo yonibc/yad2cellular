@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
 import com.example.yad2cellular.model.repository.PostRepository
 import com.example.yad2cellular.model.Post
 import android.widget.PopupMenu
@@ -20,8 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PostsFragment : Fragment() {
@@ -31,7 +28,6 @@ class PostsFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var filterButton: ImageButton
     private lateinit var exchangeRateText: TextView
-    private val firestore = FirebaseFirestore.getInstance()
     private val postList = mutableListOf<Post>()
     private var currentCategory: String? = null
     private lateinit var repository: PostRepository
@@ -56,7 +52,7 @@ class PostsFragment : Fragment() {
         filterButton.setOnClickListener { showPopupMenu(it) }
 
         repository = PostRepository(requireContext())
-        loadPostsFromFirestore()
+        loadPosts()
         fetchExchangeRate()
 
         return view
@@ -119,55 +115,30 @@ class PostsFragment : Fragment() {
                 else -> return@setOnMenuItemClickListener false
             }
             lifecycleScope.launch {
-                loadPostsFromFirestore() // Assuming this is a suspend function
+                loadPosts()
             }
             true
         }
-
         popupMenu.show()
     }
 
-    private fun loadPostsFromFirestore() {
+    private fun loadPosts() {
         progressBar.visibility = View.VISIBLE
 
-        val query = if (currentCategory != null) {
-            firestore.collection("posts")
-                .whereEqualTo("category", currentCategory)
-        } else {
-            lifecycleScope.launch {
-                try {
-                    val postsFromRoom = repository.fetchPosts()
-                    Log.d("PostsFragment", "Fetched ${postsFromRoom.size} posts from Firestore")
-                    postList.clear()
-                    postList.addAll(postsFromRoom)
-                    postAdapter.notifyDataSetChanged()
-                    Log.d("PostsFragment", "Fetched ${postList.size} sorted posts from Room")
-                } catch (ex: Exception) {
-                    Log.e("PostsFragment", "Full error", ex)
-                    Toast.makeText(requireContext(), "Failed to create repository", Toast.LENGTH_SHORT).show()
-                }
-                finally {
-                    progressBar.visibility = View.GONE
-                }
-            }
-            return
-        }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                progressBar.visibility = View.GONE
+        lifecycleScope.launch {
+            try {
+                val postsFromRoom = repository.fetchPosts(category = currentCategory?:"")
                 postList.clear()
-
-                for (document in documents) {
-                    val post = document.toObject(Post::class.java)
-                    postList.add(post)
-                }
-
+                postList.addAll(postsFromRoom)
                 postAdapter.notifyDataSetChanged()
+                Log.d("PostsFragment", "Fetched ${postList.size} posts")
+            } catch (ex: Exception) {
+                Log.e("PostsFragment", "Error", ex)
+                Toast.makeText(requireContext(), "Failed to create repository", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
+            finally {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Failed to load posts", Toast.LENGTH_SHORT).show()
             }
+        }
     }
 }

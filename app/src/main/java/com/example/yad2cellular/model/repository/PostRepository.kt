@@ -38,19 +38,27 @@ class PostRepository(context: Context) {
         }
     }
 
-    suspend fun fetchPosts(): List<Post> {
+    suspend fun fetchPosts(category: String): List<Post> {
         return withContext(Dispatchers.IO) {
-            val posts = fetchFromFirestore()
+            val posts = fetchFromFirestore(category)
             postDao.clearAllPosts()
             postDao.insertPosts(posts)
-            Log.d("PostRepository", "fetchPosts: ${posts.size} posts fetched")
+            Log.d("PostRepository", "Fetched ${posts.size} posts")
             posts
         }
     }
 
-    private suspend fun fetchFromFirestore(): List<Post> {
+    private suspend fun fetchFromFirestore(category: String): List<Post> {
         return withContext(Dispatchers.IO) {
-            val snapshot = firestore.collection("posts").get().await()
+            if (category.isNotEmpty()) {
+                Log.d("PostRepository", "category: $category")
+            }
+            val snapshot = if (category.isNotEmpty()) {
+                firestore.collection("posts")
+                    .whereEqualTo("category", category).get().await()
+            } else {
+                firestore.collection("posts").get().await()
+            }
             val posts = snapshot.documents.mapNotNull { doc ->
                 doc.toObject(Post::class.java)
             }
