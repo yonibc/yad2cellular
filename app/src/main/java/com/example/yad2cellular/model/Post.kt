@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
-@Entity
+@Entity(tableName = "posts")
 @Parcelize
 data class Post(
     @PrimaryKey val postId: String = "",
