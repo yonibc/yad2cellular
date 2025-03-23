@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.yad2cellular.utils.CloudinaryUploader
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -119,20 +120,19 @@ class UpdateDetailsFragment : Fragment() {
 
     private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, phone: String) {
         selectedImageUri?.let { uri ->
-            val storageRef = storage.reference.child("profile_images/$userId.jpg")
-
-            storageRef.putFile(uri)
-                .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        saveUserData(userId, firstName, lastName, phone, downloadUri.toString())
+            CloudinaryUploader.uploadImage(requireContext(), uri, "profile_images",
+                onSuccess = { imageUrl ->
+                    requireActivity().runOnUiThread {
+                        saveUserData(userId, firstName, lastName, phone, imageUrl)
+                    }
+                },
+                onError = {
+                    requireActivity().runOnUiThread {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
                     }
                 }
-                .addOnFailureListener {
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
-                }
-        } ?: run {
-            saveUserData(userId, firstName, lastName, phone, currentImageUrl)
+            )
         }
     }
 

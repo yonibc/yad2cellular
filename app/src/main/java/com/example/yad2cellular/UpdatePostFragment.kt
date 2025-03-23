@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.yad2cellular.utils.CloudinaryUploader
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
@@ -158,22 +159,22 @@ class UpdatePostFragment : Fragment() {
         description: String
     ) {
         selectedImageUri?.let { uri ->
-            val storageRef = storage.reference.child("post_images/$postId.jpg")
-
-            storageRef.putFile(uri)
-                .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        savePostDataToFirestore(name, category, location, price, description, downloadUri.toString())
+            CloudinaryUploader.uploadImage(requireContext(), uri, "post_images",
+                onSuccess = { imageUrl ->
+                    requireActivity().runOnUiThread {
+                        savePostDataToFirestore(name, category, location, price, description, imageUrl)
+                    }
+                },
+                onError = {
+                    requireActivity().runOnUiThread {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(requireContext(), "Failed to upload image.", Toast.LENGTH_SHORT).show()
                     }
                 }
-                .addOnFailureListener {
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Failed to upload image.", Toast.LENGTH_SHORT).show()
-                }
-        } ?: run {
-            savePostDataToFirestore(name, category, location, price, description, currentImageUrl)
+            )
         }
     }
+
 
     private fun savePostDataToFirestore(
         name: String,

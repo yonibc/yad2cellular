@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.yad2cellular.utils.CloudinaryUploader
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -96,23 +97,34 @@ class CreatePostFragment : Fragment() {
         progressDialog.show()
 
         selectedImageUri?.let { uri ->
-            val storageRef = storage.reference.child("post_images/$postId.jpg")
-
-            storageRef.putFile(uri)
-                .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { imageUrl ->
-                        savePostToFirestore(postId, userId, name, price, description, category, location, imageUrl.toString())
+            CloudinaryUploader.uploadImage(requireContext(), uri, "post_images",
+                onSuccess = { imageUrl ->
+                    requireActivity().runOnUiThread {
+                        savePostToFirestore(
+                            postId,
+                            userId,
+                            name,
+                            price,
+                            description,
+                            category,
+                            location,
+                            imageUrl
+                        )
+                    }
+                },
+                onError = {
+                    requireActivity().runOnUiThread {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to upload image",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
-                .addOnFailureListener {
-                    progressDialog.dismiss()
-                    Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
-                }
-        } ?: run {
-            savePostToFirestore(postId, userId, name, price, description, category, location, null)
+            )
         }
     }
-
 
     private fun savePostWithoutImage(name: String, price: String, description: String, category: String, location: String) {
         val userId = auth.currentUser?.uid ?: return

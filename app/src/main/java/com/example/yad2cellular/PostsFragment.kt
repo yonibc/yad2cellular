@@ -73,7 +73,8 @@ class PostsFragment : Fragment() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                response.body()?.string()?.let { responseBody ->
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
                     try {
                         val json = JSONObject(responseBody)
                         shekelRate = json.getJSONObject("rates").getDouble("ILS")
@@ -90,6 +91,7 @@ class PostsFragment : Fragment() {
                         }
                     }
                 }
+
             }
         })
     }
