@@ -11,14 +11,14 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
-        mavenCentral()
+        mavenCentral() // ✅ Needed for Cloudinary
     }
 }
 
 rootProject.name = "yad2cellular"
 include(":app")
- 
