@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -13,17 +14,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2cellular.model.Post
-import com.google.firebase.auth.FirebaseAuth
 import com.example.yad2cellular.model.FirebaseModel
+import com.google.firebase.auth.FirebaseAuth
 
 class MyPostsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var myPostAdapter: MyPostsAdapter
     private lateinit var progressBar: ProgressBar
+    private lateinit var emptyTextView: TextView
     private val postList = mutableListOf<Post>()
-    private val auth = FirebaseAuth.getInstance()
 
+    private val auth = FirebaseAuth.getInstance()
     private val firebase = FirebaseModel()
 
     override fun onCreateView(
@@ -34,8 +36,10 @@ class MyPostsFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewMyPosts)
         progressBar = view.findViewById(R.id.progress_bar_my_posts)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        emptyTextView = view.findViewById(R.id.empty_text_my_posts)
         val backArrow: ImageButton = view.findViewById(R.id.back_arrow_my_posts)
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         myPostAdapter = MyPostsAdapter(postList,
             onEditClickListener = { post ->
@@ -46,53 +50,52 @@ class MyPostsFragment : Fragment() {
                 val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
                 dialogBuilder.setMessage("Are you sure you want to delete this post?")
                     .setCancelable(false)
-                    .setPositiveButton("Yes") { dialog, id ->
+                    .setPositiveButton("Yes") { _, _ ->
                         val currentUser = auth.currentUser
                         if (currentUser != null && post.userId == currentUser.uid) {
-
                             firebase.deletePost(post.postId) {
                                 postList.remove(post)
                                 myPostAdapter.notifyDataSetChanged()
                                 Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
+                                toggleEmptyState()
                             }
-
                         }
                     }
-                    .setNegativeButton("No") { dialog, id ->
-                        dialog.dismiss()
-                    }
+                    .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
 
-                val alert = dialogBuilder.create()
-                alert.show()
+                dialogBuilder.create().show()
             }
         )
+
         recyclerView.adapter = myPostAdapter
-
-        fetchUserPosts()
-
         backArrow.setOnClickListener {
             it.findNavController().navigate(R.id.action_myPostsFragment_to_myProfileFragment)
         }
 
+        fetchUserPosts()
         return view
     }
 
     private fun fetchUserPosts() {
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
-            return // User not logged in
-        }
-
+        val currentUser = auth.currentUser ?: return
         progressBar.visibility = View.VISIBLE
-
-
 
         firebase.getMyPosts(currentUser.uid) { posts ->
             postList.clear()
             postList.addAll(posts)
             myPostAdapter.notifyDataSetChanged()
             progressBar.visibility = View.GONE
+            toggleEmptyState()
         }
+    }
 
+    private fun toggleEmptyState() {
+        if (postList.isEmpty()) {
+            emptyTextView.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            emptyTextView.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
     }
 }

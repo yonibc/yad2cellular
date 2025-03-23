@@ -81,7 +81,6 @@ class CreatePostFragment : Fragment() {
                 } else {
                     savePostWithoutImage(itemName, itemPrice, itemDescription, category, location)
                 }
-                findNavController().navigate(R.id.action_createPostFragment_to_postsFragment)
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields!", Toast.LENGTH_SHORT).show()
             }
@@ -135,7 +134,16 @@ class CreatePostFragment : Fragment() {
         savePostToFirestore(postId, userId, name, price, description, category, location, null)
     }
 
-    private fun savePostToFirestore(postId: String, userId: String, name: String, price: String, description: String, category: String, location: String, imageUrl: String?) {
+    private fun savePostToFirestore(
+        postId: String,
+        userId: String,
+        name: String,
+        price: String,
+        description: String,
+        category: String,
+        location: String,
+        imageUrl: String?
+    ) {
         val post = hashMapOf(
             "postId" to postId,
             "userId" to userId,
@@ -151,16 +159,16 @@ class CreatePostFragment : Fragment() {
         firestore.collection("posts").document(postId)
             .set(post)
             .addOnSuccessListener {
-                progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Post Created!", Toast.LENGTH_SHORT).show()
-
                 clearFields()
+                fetchAllPostsFromFirestore()
             }
             .addOnFailureListener {
                 progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Failed to create post", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun clearFields() {
         itemNameEditText.text.clear()
@@ -171,4 +179,26 @@ class CreatePostFragment : Fragment() {
         categorySpinner.setSelection(0)
         locationSpinner.setSelection(0)
     }
+
+    private fun fetchAllPostsFromFirestore() {
+        firestore.collection("posts")
+            .get()
+            .addOnSuccessListener { documents ->
+                val allPosts = mutableListOf<Map<String, Any>>()
+
+                for (document in documents) {
+                    allPosts.add(document.data)
+                }
+                for (post in allPosts) {
+                    println(" Post: $post")
+                }
+                progressDialog.dismiss()
+                findNavController().navigate(R.id.action_createPostFragment_to_postsFragment)
+            }
+            .addOnFailureListener {
+                progressDialog.dismiss()
+                Toast.makeText(requireContext(), "Failed to fetch posts", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 }
