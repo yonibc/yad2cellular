@@ -44,6 +44,8 @@ class UpdateDetailsFragment : Fragment() {
         val addImageButton: ImageButton = view.findViewById(R.id.add_image_image_button_update_details)
         progressBar = view.findViewById(R.id.progress_bar_update_details)
         val backArrow: ImageButton = view.findViewById(R.id.back_arrow_update_details)
+        val imageLoadingSpinner = view.findViewById<ProgressBar>(R.id.image_loading_spinner)
+
 
         val user: FirebaseUser? = auth.currentUser
         user?.let {
@@ -63,12 +65,23 @@ class UpdateDetailsFragment : Fragment() {
                     currentEmail = document.getString("email")
 
                     if (!currentImageUrl.isNullOrEmpty()) {
+                        imageLoadingSpinner.visibility = View.VISIBLE
+
                         Picasso.get()
                             .load(currentImageUrl)
                             .placeholder(R.drawable.profile_avatar)
                             .error(R.drawable.profile_avatar)
-                            .into(profileImageView)
+                            .into(profileImageView, object : com.squareup.picasso.Callback {
+                                override fun onSuccess() {
+                                    imageLoadingSpinner.visibility = View.GONE
+                                }
+
+                                override fun onError(e: Exception?) {
+                                    imageLoadingSpinner.visibility = View.GONE
+                                }
+                            })
                     }
+
                 } else {
                     Toast.makeText(requireContext(), "User data not found!", Toast.LENGTH_SHORT).show()
                 }
@@ -152,7 +165,6 @@ class UpdateDetailsFragment : Fragment() {
                 progressBar.visibility = View.GONE
                 Toast.makeText(requireContext(), "Details updated successfully", Toast.LENGTH_SHORT).show()
 
-                // Navigate back to MyProfileFragment
                 findNavController().navigate(R.id.myProfileFragment)
             }
             .addOnFailureListener {
