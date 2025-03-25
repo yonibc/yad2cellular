@@ -9,29 +9,29 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2cellular.model.Post
-import com.example.yad2cellular.model.FirebaseModel
-import com.google.firebase.auth.FirebaseAuth
+import com.example.yad2cellular.viewmodel.MyPostsViewModel
 
 class MyPostsFragment : Fragment() {
 
+    private lateinit var viewModel: MyPostsViewModel
     private lateinit var recyclerView: RecyclerView
-    private lateinit var myPostAdapter: MyPostsAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var emptyTextView: TextView
-    private val postList = mutableListOf<Post>()
-    private val auth = FirebaseAuth.getInstance()
-    private val firebase = FirebaseModel()
+    private lateinit var adapter: MyPostsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_my_posts, container, false)
+
+        viewModel = ViewModelProvider(this)[MyPostsViewModel::class.java]
 
         recyclerView = view.findViewById(R.id.recyclerViewMyPosts)
         progressBar = view.findViewById(R.id.progress_bar_my_posts)
@@ -40,61 +40,55 @@ class MyPostsFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        myPostAdapter = MyPostsAdapter(postList,
+        adapter = MyPostsAdapter(mutableListOf(),
             onEditClickListener = { post ->
                 val navAction = MyPostsFragmentDirections.actionMyPostsFragmentToUpdatePostFragment(post.postId)
                 findNavController().navigate(navAction)
             },
             onDeleteClickListener = { post ->
-                val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
-                dialogBuilder.setMessage("Are you sure you want to delete this post?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes") { _, _ ->
-                        val currentUser = auth.currentUser
-                        if (currentUser != null && post.userId == currentUser.uid) {
-                            firebase.deletePost(post.postId) {
-                                postList.remove(post)
-                                myPostAdapter.notifyDataSetChanged()
-                                Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
-                                toggleEmptyPosts()
-                            }
-                        }
-                    }
-                    .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
-
-                dialogBuilder.create().show()
+                showDeleteConfirmation(post)
             }
         )
 
-        recyclerView.adapter = myPostAdapter
+        recyclerView.adapter = adapter
+
         backArrow.setOnClickListener {
             it.findNavController().navigate(R.id.action_myPostsFragment_to_myProfileFragment)
         }
 
-        fetchUserPosts()
+        observeViewModel()
+        viewModel.fetchUserPosts()
+
         return view
     }
 
-    private fun fetchUserPosts() {
-        val currentUser = auth.currentUser ?: return
-        progressBar.visibility = View.VISIBLE
+    private fun observeViewModel() {
+        viewModel.myPosts.observe(viewLifecycleOwner) { posts ->
+            adapter.updatePosts(posts)
+            toggleEmptyState(posts.isEmpty())
+        }
 
-        firebase.getMyPosts(currentUser.uid) { posts ->
-            postList.clear()
-            postList.addAll(posts)
-            myPostAdapter.notifyDataSetChanged()
-            progressBar.visibility = View.GONE
-            toggleEmptyPosts()
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
     }
 
-    private fun toggleEmptyPosts() {
-        if (postList.isEmpty()) {
-            emptyTextView.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-        } else {
-            emptyTextView.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-        }
+    private fun toggleEmptyState(isEmpty: Boolean) {
+        emptyTextView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
+    }
+
+    private fun showDeleteConfirmation(post: Post) {
+        val dialog = android.app.AlertDialog.Builder(requireContext())
+            .setMessage("Are you sure you want to delete this post?")
+            .setPositiveButton("Yes") { _, _ ->
+                viewModel.deletePost(post) {
+                    Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("No", null)
+            .create()
+
+        dialog.show()
     }
 }
