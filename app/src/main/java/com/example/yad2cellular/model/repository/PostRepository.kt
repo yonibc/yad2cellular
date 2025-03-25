@@ -9,6 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
 
 class PostRepository(context: Context) {
     private val postDao = PostDatabase.getDatabase(context).postDao()
@@ -45,6 +48,21 @@ class PostRepository(context: Context) {
             postDao.insertPosts(posts)
             Log.d("PostRepository", "Fetched ${posts.size} posts")
             posts
+        }
+    }
+
+    suspend fun fetchExchangeRate(): Double {
+        return withContext(Dispatchers.IO) {
+            try {
+                val url = "https://api.exchangerate-api.com/v4/latest/USD"
+                val client = OkHttpClient()
+                val response = client.newCall(Request.Builder().url(url).build()).execute()
+                val jsonResponse = response.body?.string()?.let { JSONObject(it) }
+                jsonResponse?.getJSONObject("rates")?.getDouble("ILS") ?: -1.0
+            } catch (e: Exception) {
+                Log.e("PostRepository", "Error fetching exchange rate", e)
+                -1.0
+            }
         }
     }
 

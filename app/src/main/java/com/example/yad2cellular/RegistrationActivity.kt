@@ -112,8 +112,6 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun saveUserToFirestore(userId: String, firstName: String, lastName: String, email: String, phone: String, imageUrl: String?) {
         val user = hashMapOf(
             "firstName" to firstName,
