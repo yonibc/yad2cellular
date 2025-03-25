@@ -3,7 +3,9 @@ package com.example.yad2cellular
 import android.app.ProgressDialog
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -16,25 +18,19 @@ import java.util.*
 import com.example.yad2cellular.utils.Constants
 
 class CreatePostFragment : Fragment() {
-
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
     private lateinit var progressDialog: ProgressDialog
+    private var selectedImageUri: Uri? = null
 
     private lateinit var categorySpinner: Spinner
     private lateinit var locationSpinner: Spinner
     private lateinit var itemNameEditText: EditText
     private lateinit var itemPriceEditText: EditText
     private lateinit var itemDescriptionEditText: EditText
+    private lateinit var addImageButton: ImageButton
     private lateinit var createPostButton: Button
-    private lateinit var addImagesButton: Button
-
-    private lateinit var imageView1: ImageView
-    private lateinit var imageView2: ImageView
-    private lateinit var imageView3: ImageView
-
-    private val selectedImageUris = mutableListOf<Uri>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,35 +43,28 @@ class CreatePostFragment : Fragment() {
         storage = FirebaseStorage.getInstance()
         progressDialog = ProgressDialog(requireContext())
 
-        // View bindings
         categorySpinner = view.findViewById(R.id.item_category_spinner_create_post_activity)
         locationSpinner = view.findViewById(R.id.item_location_spinner_create_post_activity)
         itemNameEditText = view.findViewById(R.id.item_name_edit_text_create_post_activity)
         itemPriceEditText = view.findViewById(R.id.item_price_edit_text_create_post_activity)
         itemDescriptionEditText = view.findViewById(R.id.item_description_edit_text_create_post_activity)
+        addImageButton = view.findViewById(R.id.add_image_image_button_create_post_activity)
         createPostButton = view.findViewById(R.id.create_post_button_create_post_activity)
-        addImagesButton = view.findViewById(R.id.add_image_button)
 
-        imageView1 = view.findViewById(R.id.image1)
-        imageView2 = view.findViewById(R.id.image2)
-        imageView3 = view.findViewById(R.id.image3)
-
-        // Spinners
         val categories = Constants.categories
         val locations = Constants.locations
         categorySpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
         locationSpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, locations)
 
-        // Image picker
-        val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-            if (uris != null && uris.isNotEmpty()) {
-                selectedImageUris.clear()
-                selectedImageUris.addAll(uris.take(3))
-                loadImagesToViews()
+        // Image Picker
+        val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                selectedImageUri = uri
+                addImageButton.setImageURI(uri)
             }
         }
 
-        addImagesButton.setOnClickListener {
+        addImageButton.setOnClickListener {
             imagePickerLauncher.launch("image/*")
         }
 
@@ -87,7 +76,11 @@ class CreatePostFragment : Fragment() {
             val location = locationSpinner.selectedItem.toString()
 
             if (itemName.isNotEmpty() && itemPrice.isNotEmpty() && itemDescription.isNotEmpty()) {
-                uploadImagesAndSavePost(itemName, itemPrice, itemDescription, category, location)
+                if (selectedImageUri != null) {
+                    uploadImageAndSavePost(itemName, itemPrice, itemDescription, category, location)
+                } else {
+                    savePostWithoutImage(itemName, itemPrice, itemDescription, category, location)
+                }
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields!", Toast.LENGTH_SHORT).show()
             }
@@ -96,53 +89,49 @@ class CreatePostFragment : Fragment() {
         return view
     }
 
-    private fun loadImagesToViews() {
-        val imageViews = listOf(imageView1, imageView2, imageView3)
-        imageViews.forEachIndexed { index, imageView ->
-            if (index < selectedImageUris.size) {
-                imageView.setImageURI(selectedImageUris[index])
-            } else {
-                imageView.setImageDrawable(null)
-            }
-        }
-    }
-
-    private fun uploadImagesAndSavePost(
-        name: String,
-        price: String,
-        description: String,
-        category: String,
-        location: String
-    ) {
+    private fun uploadImageAndSavePost(name: String, price: String, description: String, category: String, location: String) {
         val userId = auth.currentUser?.uid ?: return
         val postId = UUID.randomUUID().toString()
-        progressDialog.setMessage("Uploading images...")
+        progressDialog.setMessage("Uploading post...")
         progressDialog.show()
 
-        if (selectedImageUris.isEmpty()) {
-            savePostToFirestore(postId, userId, name, price, description, category, location, null)
-            return
-        }
-
-        var uploadsCompleted = 0
-        val imageUrls = mutableListOf<String>()
-
-        selectedImageUris.forEach { uri ->
+        selectedImageUri?.let { uri ->
             CloudinaryUploader.uploadImage(requireContext(), uri, "post_images",
                 onSuccess = { imageUrl ->
-                    imageUrls.add(imageUrl)
-                    uploadsCompleted++
-                    if (uploadsCompleted == selectedImageUris.size) {
-                        val mainImageUrl = imageUrls.firstOrNull()
-                        savePostToFirestore(postId, userId, name, price, description, category, location, mainImageUrl)
+                    requireActivity().runOnUiThread {
+                        savePostToFirestore(
+                            postId,
+                            userId,
+                            name,
+                            price,
+                            description,
+                            category,
+                            location,
+                            imageUrl
+                        )
                     }
                 },
                 onError = {
-                    progressDialog.dismiss()
-                    Toast.makeText(requireContext(), "Error uploading image", Toast.LENGTH_SHORT).show()
+                    requireActivity().runOnUiThread {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to upload image",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             )
         }
+    }
+
+    private fun savePostWithoutImage(name: String, price: String, description: String, category: String, location: String) {
+        val userId = auth.currentUser?.uid ?: return
+        val postId = UUID.randomUUID().toString()
+        progressDialog.setMessage("Saving post...")
+        progressDialog.show()
+
+        savePostToFirestore(postId, userId, name, price, description, category, location, null)
     }
 
     private fun savePostToFirestore(
@@ -170,13 +159,46 @@ class CreatePostFragment : Fragment() {
         firestore.collection("posts").document(postId)
             .set(post)
             .addOnSuccessListener {
-                progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Post Created!", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_createPostFragment_to_postsFragment)
+                clearFields()
+                fetchAllPostsFromFirestore()
             }
             .addOnFailureListener {
                 progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Failed to create post", Toast.LENGTH_SHORT).show()
             }
     }
+
+
+    private fun clearFields() {
+        itemNameEditText.text.clear()
+        itemPriceEditText.text.clear()
+        itemDescriptionEditText.text.clear()
+        selectedImageUri = null
+        addImageButton.setImageResource(R.drawable.add_photo)
+        categorySpinner.setSelection(0)
+        locationSpinner.setSelection(0)
+    }
+
+    private fun fetchAllPostsFromFirestore() {
+        firestore.collection("posts")
+            .get()
+            .addOnSuccessListener { documents ->
+                val allPosts = mutableListOf<Map<String, Any>>()
+
+                for (document in documents) {
+                    allPosts.add(document.data)
+                }
+                for (post in allPosts) {
+                    println(" Post: $post")
+                }
+                progressDialog.dismiss()
+                findNavController().navigate(R.id.action_createPostFragment_to_postsFragment)
+            }
+            .addOnFailureListener {
+                progressDialog.dismiss()
+                Toast.makeText(requireContext(), "Failed to fetch posts", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 }
