@@ -14,8 +14,11 @@ import com.example.yad2cellular.viewmodel.MyProfileViewModel
 
 class MyProfileFragment : Fragment() {
 
+
     private var _binding: FragmentMyProfileBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentMyProfileBinding
+        get() = _binding ?: throw IllegalStateException("View binding accessed outside of view lifecycle.")
+
 
     private lateinit var viewModel: MyProfileViewModel
 
