@@ -1,4 +1,3 @@
-// CreatePostFragment.kt
 package com.example.yad2cellular
 
 import android.app.ProgressDialog
