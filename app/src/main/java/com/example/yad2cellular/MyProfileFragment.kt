@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 class MyProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var _binding: FragmentMyProfileBinding? = null
-    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

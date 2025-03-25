@@ -24,7 +24,6 @@ class MyPostsFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var emptyTextView: TextView
     private val postList = mutableListOf<Post>()
-
     private val auth = FirebaseAuth.getInstance()
     private val firebase = FirebaseModel()
 
@@ -43,8 +42,8 @@ class MyPostsFragment : Fragment() {
 
         myPostAdapter = MyPostsAdapter(postList,
             onEditClickListener = { post ->
-                val action = MyPostsFragmentDirections.actionMyPostsFragmentToUpdatePostFragment(post.postId)
-                findNavController().navigate(action)
+                val navAction = MyPostsFragmentDirections.actionMyPostsFragmentToUpdatePostFragment(post.postId)
+                findNavController().navigate(navAction)
             },
             onDeleteClickListener = { post ->
                 val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
@@ -57,7 +56,7 @@ class MyPostsFragment : Fragment() {
                                 postList.remove(post)
                                 myPostAdapter.notifyDataSetChanged()
                                 Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
-                                toggleEmptyState()
+                                toggleEmptyPosts()
                             }
                         }
                     }
@@ -85,11 +84,11 @@ class MyPostsFragment : Fragment() {
             postList.addAll(posts)
             myPostAdapter.notifyDataSetChanged()
             progressBar.visibility = View.GONE
-            toggleEmptyState()
+            toggleEmptyPosts()
         }
     }
 
-    private fun toggleEmptyState() {
+    private fun toggleEmptyPosts() {
         if (postList.isEmpty()) {
             emptyTextView.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
