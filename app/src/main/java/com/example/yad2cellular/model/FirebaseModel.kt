@@ -9,15 +9,6 @@ import com.google.firebase.storage.storage
 class FirebaseModel {
 
     private val database = Firebase.firestore
-    private val storage = Firebase.storage
-
-//    init {
-//        val setting = firestoreSettings {
-//            setLocalCacheSettings(memoryCacheSettings { }) // prevent local cache creation from firestore
-//        }
-//
-//        database.firestoreSettings = setting
-//    }
 
     fun getAllPosts(callback: (List<Post>) -> Unit) {
         database.collection("posts")
