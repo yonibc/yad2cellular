@@ -9,18 +9,22 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.squareup.picasso.Picasso
-import com.google.firebase.firestore.FirebaseFirestore
 import com.example.yad2cellular.model.Post
+import com.example.yad2cellular.viewmodel.PostDetailsViewModel
 
 class PostDetailsFragment : Fragment() {
+
+    private lateinit var viewModel: PostDetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_post_details, container, false)
+        viewModel = ViewModelProvider(this)[PostDetailsViewModel::class.java]
 
         val postImageView: ImageView = view.findViewById(R.id.postImage)
         val postTitle: TextView = view.findViewById(R.id.postTitle)
@@ -48,30 +52,19 @@ class PostDetailsFragment : Fragment() {
                 postImageView.setImageResource(R.drawable.placeholder_image)
             }
 
-            val firestore = FirebaseFirestore.getInstance()
-            progressBar.visibility = View.VISIBLE
-            sellerEmail.text = "Loading..."
-            sellerPhone.text = ""
+            viewModel.fetchSellerDetails(it.userId)
+        }
 
-            firestore.collection("users").document(it.userId)
-                .get()
-                .addOnSuccessListener { document ->
-                    progressBar.visibility = View.GONE
-                    if (document.exists()) {
-                        val email = document.getString("email") ?: "Unknown Email"
-                        val phone = document.getString("phone") ?: "Unknown Phone"
-                        sellerEmail.text = "Seller Email: $email"
-                        sellerPhone.text = "Seller Phone: $phone"
-                    } else {
-                        sellerEmail.text = "Seller Email: Not Found"
-                        sellerPhone.text = "Seller Phone: Not Found"
-                    }
-                }
-                .addOnFailureListener {
-                    progressBar.visibility = View.GONE
-                    sellerEmail.text = "Seller Email: Error Loading"
-                    sellerPhone.text = "Seller Phone: Error Loading"
-                }
+        viewModel.sellerEmail.observe(viewLifecycleOwner) {
+            sellerEmail.text = it
+        }
+
+        viewModel.sellerPhone.observe(viewLifecycleOwner) {
+            sellerPhone.text = it
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            progressBar.visibility = if (it) View.VISIBLE else View.GONE
         }
 
         backArrow.setOnClickListener {
@@ -81,3 +74,4 @@ class PostDetailsFragment : Fragment() {
         return view
     }
 }
+
