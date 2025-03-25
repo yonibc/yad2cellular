@@ -161,7 +161,7 @@ class CreatePostFragment : Fragment() {
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Post Created!", Toast.LENGTH_SHORT).show()
                 clearFields()
-                fetchAllPostsFromFirestore()
+                fetchAllPosts()
             }
             .addOnFailureListener {
                 progressDialog.dismiss()
@@ -180,7 +180,7 @@ class CreatePostFragment : Fragment() {
         locationSpinner.setSelection(0)
     }
 
-    private fun fetchAllPostsFromFirestore() {
+    private fun fetchAllPosts() {
         firestore.collection("posts")
             .get()
             .addOnSuccessListener { documents ->
