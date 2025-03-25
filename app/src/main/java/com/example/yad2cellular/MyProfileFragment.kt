@@ -7,40 +7,55 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.yad2cellular.databinding.FragmentMyProfileBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.example.yad2cellular.viewmodel.MyProfileViewModel
 
 class MyProfileFragment : Fragment() {
-    private lateinit var auth: FirebaseAuth
+
     private var _binding: FragmentMyProfileBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var viewModel: MyProfileViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {  // Return nullable View
+    ): View {
         _binding = FragmentMyProfileBinding.inflate(inflater, container, false)
-        val view = _binding?.root ?: return null
+        viewModel = ViewModelProvider(this)[MyProfileViewModel::class.java]
 
-        auth = FirebaseAuth.getInstance()
+        setupUI()
+        observeViewModel()
 
-        _binding?.updateDetailsButton?.setOnClickListener {
+        return binding.root
+    }
+
+    private fun setupUI() {
+        binding.updateDetailsButton.setOnClickListener {
             findNavController().navigate(R.id.action_myProfileFragment_to_updateDetailsFragment)
         }
 
-        _binding?.myPostsButton?.setOnClickListener {
+        binding.myPostsButton.setOnClickListener {
             findNavController().navigate(R.id.action_myProfileFragment_to_myPostsFragment)
         }
 
-        _binding?.logoutButton?.setOnClickListener {
-            auth.signOut()
-            Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+        binding.logoutButton.setOnClickListener {
+            viewModel.logout()
         }
+    }
 
-        return view
+    private fun observeViewModel() {
+        viewModel.isLoggedOut.observe(viewLifecycleOwner) { loggedOut ->
+            if (loggedOut) {
+                Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+                val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onDestroyView() {

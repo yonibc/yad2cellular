@@ -53,6 +53,13 @@ class MyPostsAdapter(
         holder.deleteButton.setOnClickListener { onDeleteClickListener(post) }
     }
 
+    fun updatePosts(newPosts: List<Post>) {
+        (posts as MutableList).clear()
+        (posts as MutableList).addAll(newPosts)
+        notifyDataSetChanged()
+    }
+
+
 
     override fun getItemCount(): Int {
         return posts.size
