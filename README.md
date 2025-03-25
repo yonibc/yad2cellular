@@ -1,6 +1,6 @@
-# 📱 Yad2Cellular – Android Marketplace App
+# 📱 NextTrade – Android Marketplace App
 
-Yad2Cellular is a second-hand mobile marketplace built with modern Android development principles. Inspired by platforms like Yad2 and Facebook Marketplace, it allows users to register, create listings, view posts, and manage their own listings with ease.
+NextTrade is a second-hand mobile marketplace built with modern Android development principles. Inspired by platforms like Yad2 and Facebook Marketplace, it allows users to register, create listings, view posts, and manage their own listings with ease.
 
 The app is built entirely in **Kotlin**, leveraging **Jetpack Navigation**, **Firebase (Auth + Firestore)**, **Cloudinary**, and **Picasso** for image handling. The UI uses **ConstraintLayout** for responsive design.
 
@@ -8,7 +8,7 @@ The app is built entirely in **Kotlin**, leveraging **Jetpack Navigation**, **Fi
 
 ## 🎯 Project Vision
 
-The goal of Yad2Cellular is to deliver a clean, lightweight marketplace app where:
+The goal of NextTrade is to deliver a clean, lightweight marketplace app where:
 
 - New and authenticated users can easily create listings.
 - Listings are presented in a fast, scrollable feed.
@@ -31,10 +31,6 @@ All screens (besides Login and Registration) are hosted inside **MainActivity**,
 - Keeps the back stack consistent
 - Simplifies shared elements (like bottom navigation or headers)
 - Makes global transitions and animations easier
-
-#### ✅ Lifecycle Management
-
-Fragments integrate well with `ViewModel`, `LiveData`, and lifecycle-aware components. It lets us scope view models to a navigation graph or activity.
 
 #### ✅ UI Reusability
 
@@ -113,26 +109,11 @@ Used in all layouts for its:
     - Post detail view
     - MyPosts edit/view screen
 
-### RecyclerView
-
-- Used in `PostsFragment` and `MyPostsFragment`
-- Custom adapter (`PostAdapter`, `MyPostsAdapter`) for clean data binding
-- Each post item includes image, title, price, and category
-
 ### Input Fields
 
 - Spinners for category/location to limit invalid entries
 - EditTexts for title, price, and description
 - Simple validation and feedback via Toasts
-
----
-
-## 🔧 App Logic Highlights
-
-- Posts are stored in Firestore with their metadata and Cloudinary image URL
-- On viewing posts, image is fetched using **Picasso**
-- On creating/updating posts, a **ProgressDialog** shows upload state
-- Reusable components (`CloudinaryUploader`, `Constants.kt`) simplify shared logic
 
 ---
 
