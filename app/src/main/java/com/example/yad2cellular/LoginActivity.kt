@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         } else {
-                            Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Login Failed: Wrong Credentials", Toast.LENGTH_SHORT).show()
                         }
                     }
             } else {

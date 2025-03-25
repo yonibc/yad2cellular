@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.yad2cellular.utils.CloudinaryUploader
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,6 +44,8 @@ class UpdateDetailsFragment : Fragment() {
         val addImageButton: ImageButton = view.findViewById(R.id.add_image_image_button_update_details)
         progressBar = view.findViewById(R.id.progress_bar_update_details)
         val backArrow: ImageButton = view.findViewById(R.id.back_arrow_update_details)
+        val imageLoadingSpinner = view.findViewById<ProgressBar>(R.id.image_loading_spinner)
+
 
         val user: FirebaseUser? = auth.currentUser
         user?.let {
@@ -62,12 +65,23 @@ class UpdateDetailsFragment : Fragment() {
                     currentEmail = document.getString("email")
 
                     if (!currentImageUrl.isNullOrEmpty()) {
+                        imageLoadingSpinner.visibility = View.VISIBLE
+
                         Picasso.get()
                             .load(currentImageUrl)
                             .placeholder(R.drawable.profile_avatar)
                             .error(R.drawable.profile_avatar)
-                            .into(profileImageView)
+                            .into(profileImageView, object : com.squareup.picasso.Callback {
+                                override fun onSuccess() {
+                                    imageLoadingSpinner.visibility = View.GONE
+                                }
+
+                                override fun onError(e: Exception?) {
+                                    imageLoadingSpinner.visibility = View.GONE
+                                }
+                            })
                     }
+
                 } else {
                     Toast.makeText(requireContext(), "User data not found!", Toast.LENGTH_SHORT).show()
                 }
@@ -119,20 +133,19 @@ class UpdateDetailsFragment : Fragment() {
 
     private fun uploadImageToStorage(userId: String, firstName: String, lastName: String, phone: String) {
         selectedImageUri?.let { uri ->
-            val storageRef = storage.reference.child("profile_images/$userId.jpg")
-
-            storageRef.putFile(uri)
-                .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        saveUserData(userId, firstName, lastName, phone, downloadUri.toString())
+            CloudinaryUploader.uploadImage(requireContext(), uri, "profile_images",
+                onSuccess = { imageUrl ->
+                    requireActivity().runOnUiThread {
+                        saveUserData(userId, firstName, lastName, phone, imageUrl)
+                    }
+                },
+                onError = {
+                    requireActivity().runOnUiThread {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
                     }
                 }
-                .addOnFailureListener {
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
-                }
-        } ?: run {
-            saveUserData(userId, firstName, lastName, phone, currentImageUrl)
+            )
         }
     }
 
@@ -152,7 +165,6 @@ class UpdateDetailsFragment : Fragment() {
                 progressBar.visibility = View.GONE
                 Toast.makeText(requireContext(), "Details updated successfully", Toast.LENGTH_SHORT).show()
 
-                // Navigate back to MyProfileFragment
                 findNavController().navigate(R.id.myProfileFragment)
             }
             .addOnFailureListener {

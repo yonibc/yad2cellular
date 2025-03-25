@@ -80,6 +80,10 @@ dependencies {
     // Image loading
     implementation("com.squareup.picasso:picasso:2.8")
 
+    // Cloudinary
+    implementation("com.cloudinary:cloudinary-android:2.3.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
