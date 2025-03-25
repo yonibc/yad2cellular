@@ -16,9 +16,6 @@ import com.example.yad2cellular.model.repository.PostRepository
 import com.example.yad2cellular.model.Post
 import android.widget.PopupMenu
 import androidx.lifecycle.lifecycleScope
-import okhttp3.*
-import org.json.JSONObject
-import java.io.IOException
 import kotlinx.coroutines.launch
 
 class PostsFragment : Fragment() {
@@ -28,10 +25,9 @@ class PostsFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var filterButton: ImageButton
     private lateinit var exchangeRateText: TextView
+    private lateinit var repository: PostRepository
     private val postList = mutableListOf<Post>()
     private var currentCategory: String? = null
-    private lateinit var repository: PostRepository
-
     private var shekelRate: Double = -1.0 // default value in case of error
 
     override fun onCreateView(
@@ -59,41 +55,17 @@ class PostsFragment : Fragment() {
     }
 
     private fun fetchExchangeRate() {
-        val url = "https://api.exchangerate-api.com/v4/latest/USD"
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, ex: IOException) {
-                requireActivity().runOnUiThread {
-                    exchangeRateText.text = "Failed to load rate"
-                    shekelRate = -1.0
-                    postAdapter.notifyDataSetChanged()
-                }
+        lifecycleScope.launch {
+            shekelRate = repository.fetchExchangeRate()
+            exchangeRateText.text = if (shekelRate > 0) {
+                "1 USD = %.2f ILS".format(shekelRate)
+            } else {
+                "Failed to load rate"
             }
+            postAdapter.shekelRate = shekelRate
+            postAdapter.notifyDataSetChanged()
+        }
 
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
-                if (responseBody != null) {
-                    try {
-                        val json = JSONObject(responseBody)
-                        shekelRate = json.getJSONObject("rates").getDouble("ILS")
-                        requireActivity().runOnUiThread {
-                            exchangeRateText.text = "1 USD = %.2f ILS".format(shekelRate)
-                            postAdapter.shekelRate = shekelRate
-                            postAdapter.notifyDataSetChanged()
-                        }
-                    } catch (ex: Exception) {
-                        requireActivity().runOnUiThread {
-                            exchangeRateText.text = "Error loading rate"
-                            shekelRate = -1.0
-                            postAdapter.notifyDataSetChanged()
-                        }
-                    }
-                }
-
-            }
-        })
     }
 
     private fun showPopupMenu(view: View) {
@@ -101,19 +73,23 @@ class PostsFragment : Fragment() {
         popupMenu.menuInflater.inflate(R.menu.filter_menu, popupMenu.menu)
 
         popupMenu.setOnMenuItemClickListener { menuItem -> // menu item clicks
-            when (menuItem.itemId) {
+            currentCategory = when (menuItem.itemId) {
                 R.id.filter_cars -> {
-                    currentCategory = "Cars"
+                    "Cars"
                 }
+
                 R.id.filter_electronics -> {
-                    currentCategory = "Electronics"
+                    "Electronics"
                 }
+
                 R.id.filter_houses -> {
-                    currentCategory = "Houses"
+                    "Houses"
                 }
+
                 R.id.filter_clear -> {
-                    currentCategory = null
+                    null
                 }
+
                 else -> return@setOnMenuItemClickListener false
             }
             lifecycleScope.launch {
@@ -129,9 +105,9 @@ class PostsFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
-                val postsFromRoom = repository.fetchPosts(category = currentCategory?:"")
+                val posts = repository.fetchPosts(category = currentCategory?:"")
                 postList.clear()
-                postList.addAll(postsFromRoom)
+                postList.addAll(posts)
                 postAdapter.notifyDataSetChanged()
                 Log.d("PostsFragment", "Fetched ${postList.size} posts")
             } catch (ex: Exception) {

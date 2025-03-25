@@ -11,6 +11,6 @@
         android:title="Houses" />
     <item
         android:id="@+id/filter_clear"
-        android:title="Show All" />
+        android:title="All Posts" />
 
 </menu>
