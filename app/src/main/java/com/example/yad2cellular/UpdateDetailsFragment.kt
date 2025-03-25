@@ -17,7 +17,9 @@ import com.squareup.picasso.Picasso
 class UpdateDetailsFragment : Fragment() {
 
     private var _binding: FragmentUpdateDetailsBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentUpdateDetailsBinding
+        get() = _binding ?: throw IllegalStateException("View binding accessed outside of view lifecycle.")
+
 
     private lateinit var viewModel: UpdateDetailsViewModel
     private var selectedImageUri: Uri? = null
