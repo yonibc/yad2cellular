@@ -42,6 +42,32 @@ Jetpack Navigation ties all fragments together with a clear XML representation (
 
 ---
 
+## 🧠 ViewModel Integration (MVVM Pattern)
+
+To ensure maintainability and a cleaner architecture, the app now uses the **MVVM (Model-View-ViewModel)** pattern across core components.
+
+### 🚀 Why ViewModel?
+
+| Benefit                    | Description                                                                 |
+|----------------------------|-----------------------------------------------------------------------------|
+| **Lifecycle-aware**        | ViewModels survive configuration changes like rotation                     |
+| **Separation of Concerns** | Keeps UI logic (Fragments) separate from business and data operations       |
+| **Reactive UI**            | Uses `LiveData` to update the UI automatically when data changes            |
+
+---
+
+### 📡 LiveData in Action
+
+Each ViewModel exposes key LiveData objects:
+
+```kotlin
+val loading: LiveData<Boolean>
+val errorMessage: LiveData<String?>
+val userData: LiveData<User?>
+val postSaved: LiveData<Boolean> 
+```
+---
+
 ## 📦 Features
 
 ### 👤 User Authentication (Firebase Auth)
